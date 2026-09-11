@@ -13,6 +13,21 @@ LLM-as-judge rubric checked against a human, bootstrap confidence intervals, and
 
 > 📄 Report: [`reports/REPORT.md`](reports/REPORT.md) · Decision log: [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md)
 
+## Status
+
+| | |
+|---|---|
+| Pipeline, baselines, evaluation harness, 4 improvement iterations | done |
+| Golden-set predictions + judge verdicts for all 3 systems | done (committed) |
+| **Hand-labelling the 200 golden messages** | **pending** — `python -m src.label_app`, tab 1 |
+| **Rating 60 replies for judge agreement** | **pending** — same tool, tab 2 |
+| Final numbers, judge κ, label-noise check | one command after the above: `python -m src.finish` |
+
+Reply-quality results (golden, n=200) are already measurable without labels: the agent's drafts
+are approved by the judge **73.0%** of the time vs **44.5%** for a TF-IDF nearest-neighbour reply
+and **11.0%** for the most common canned reply (+28.5pp over the simple baseline, 95% CI
+[+21.0, +36.5]).
+
 ## Reproduce the headline results (< 15 min, no API key)
 
 ```bash

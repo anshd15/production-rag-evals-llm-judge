@@ -187,6 +187,11 @@ def ingest(role: str | None = None) -> int:
             cache.put(k, v)
         n += len(got)
         missing = wanted - set(got)
+        if not got:
+            # Nothing usable — most likely the answer file is still being written.
+            # Leave the batch in place instead of throwing the work away.
+            print(f"  {batch_path.name}: no matching answers yet, leaving queued")
+            continue
         batch_path.unlink()
         resp_path.unlink()
         if missing:

@@ -83,9 +83,10 @@ the labels are the only missing input).
 | simple (TF-IDF + NN reply) | 44.5% [38–51] | 40.7% | TBD | TBD | TBD | TBD |
 | trivial (majority + canned reply) | 11.0% [7–16] | 11.0% | TBD | TBD | TBD | TBD |
 
-The agent's replies are approved about **1.6×** as often as copying the nearest historical reply,
-and about **6.6×** as often as the single most common SpotifyCares reply. Both gaps are far wider
-than the ±6pp confidence intervals.
+The agent's replies are approved about **1.6×** as often as copying the nearest historical reply
+(+28.5pp, 95% CI [+21.0, +36.5], P(not better) = 0.000) and about **6.6×** as often as the single
+most common SpotifyCares reply. Rubric pass rates for the agent: `safe` 100%, `tone` 98%,
+`grounded` 90%, `addresses_issue` 84%, `correct_next_step` 75%.
 
 ### Dev set (n=250, silver labels) — the same comparison with routing metrics
 
