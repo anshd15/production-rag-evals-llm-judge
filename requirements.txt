@@ -1,5 +1,9 @@
-pandas
-numpy
-scikit-learn
-python-dotenv
-tqdm
+pandas==3.0.5
+numpy==2.5.3
+scikit-learn==1.9.1
+pyarrow==25.0.1
+python-dotenv==1.2.3
+sentence-transformers==6.0.1
+torch==2.14.0
+google-genai==2.23.0
+pytest==9.1.1

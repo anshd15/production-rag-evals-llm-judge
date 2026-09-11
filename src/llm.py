@@ -1,0 +1,221 @@
+"""LLM access: one batch API, a disk cache, and pluggable providers.
+
+Every response is cached in llm_cache/<provider>__<model>.jsonl keyed by a hash of
+(model, system, user). Re-running the pipeline therefore costs nothing and gives
+identical numbers — which is what makes the README's 15-minute reproduction possible.
+
+Providers (env LLM_PROVIDER):
+  gemini   Google Gemini via google-genai. Needs GEMINI_API_KEY.
+  standin  No API. Cache misses are written to llm_queue/<role>/ as JSON batches and
+           answered offline by a separate Claude session acting as the model, then
+           loaded with `python -m src.llm ingest`. Used during development before an
+           API key existed; results are reported separately from Gemini results.
+Set LLM_OFFLINE=1 to forbid any new calls (cache only) — used for reproduction.
+
+Run:  python -m src.llm ingest       # load stand-in answers into the cache
+      python -m src.llm status       # show cache sizes and pending queue items
+"""
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+from src.config import ROOT
+
+load_dotenv(ROOT / ".env")
+
+CACHE_DIR = ROOT / "llm_cache"
+QUEUE_DIR = ROOT / "llm_queue"
+STANDIN_BATCH = 25
+
+MODELS = {
+    "gemini": {
+        "agent": os.getenv("GEMINI_AGENT_MODEL", "gemini-2.5-flash"),
+        "judge": os.getenv("GEMINI_JUDGE_MODEL", "gemini-2.5-flash"),
+        "labeler": os.getenv("GEMINI_LABELER_MODEL", "gemini-2.5-flash"),
+    },
+    "standin": {
+        "agent": "claude-haiku-standin",
+        "judge": "claude-sonnet-standin",
+        "labeler": "claude-sonnet-standin",
+    },
+}
+
+
+def provider() -> str:
+    p = (os.getenv("LLM_PROVIDER") or "").strip().lower()
+    if not p:
+        p = "gemini" if os.getenv("GEMINI_API_KEY") else "standin"
+    if p not in MODELS:
+        raise ValueError(f"LLM_PROVIDER must be one of {list(MODELS)}, got {p!r}")
+    return p
+
+
+def model_for(role: str) -> str:
+    return MODELS[provider()][role]
+
+
+def cache_key(model: str, system: str, user: str) -> str:
+    return hashlib.sha256(json.dumps([model, system, user]).encode("utf-8")).hexdigest()[:24]
+
+
+class Cache:
+    def __init__(self, prov: str, model: str):
+        self.path = CACHE_DIR / f"{prov}__{model}.jsonl"
+        self.data: dict[str, str] = {}
+        if self.path.exists():
+            for line in self.path.read_text(encoding="utf-8").splitlines():
+                if line.strip():
+                    rec = json.loads(line)
+                    self.data[rec["key"]] = rec["response"]
+
+    def get(self, key):
+        return self.data.get(key)
+
+    def put(self, key, response):
+        if key in self.data:
+            return
+        self.data[key] = response
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.path, "a", encoding="utf-8") as f:
+            f.write(json.dumps({"key": key, "response": response}, ensure_ascii=False) + "\n")
+
+
+def complete_batch(role: str, requests: list[dict]) -> list[str | None]:
+    """requests: [{"system": str, "user": str}, ...] -> responses (None = pending in stand-in mode)."""
+    prov, model = provider(), model_for(role)
+    cache = Cache(prov, model)
+    keys = [cache_key(model, r["system"], r["user"]) for r in requests]
+    out = [cache.get(k) for k in keys]
+    missing = [i for i, o in enumerate(out) if o is None]
+    if not missing:
+        return out
+    if os.getenv("LLM_OFFLINE") == "1":
+        raise RuntimeError(f"{len(missing)} {role} calls not in cache and LLM_OFFLINE=1")
+    if prov == "gemini":
+        for i in missing:
+            out[i] = _gemini_call(model, requests[i]["system"], requests[i]["user"])
+            cache.put(keys[i], out[i])
+    else:
+        _enqueue(role, model, [(keys[i], requests[i]) for i in missing])
+    return out
+
+
+# ---------------------------------------------------------------- gemini
+_client = None
+_last_call = [0.0]
+
+
+def _gemini_call(model: str, system: str, user: str) -> str:
+    global _client
+    from google import genai
+    from google.genai import types
+    if _client is None:
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    min_gap = 60.0 / float(os.getenv("GEMINI_RPM", "10"))
+    config = types.GenerateContentConfig(system_instruction=system, temperature=0,
+                                         response_mime_type="application/json")
+    for attempt in range(6):
+        wait = _last_call[0] + min_gap - time.time()
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.time()
+        try:
+            return _client.models.generate_content(model=model, contents=user, config=config).text
+        except Exception as e:  # rate limits / transient server errors
+            if attempt == 5:
+                raise
+            print(f"  gemini error ({e.__class__.__name__}: {str(e)[:120]}), retrying", file=sys.stderr)
+            time.sleep(min(60, 5 * 2 ** attempt))
+
+
+# ---------------------------------------------------------------- stand-in queue
+def _enqueue(role: str, model: str, items: list[tuple[str, dict]]):
+    """Write cache misses as batch files; identical system prompts are stored once per batch."""
+    qdir = QUEUE_DIR / role
+    qdir.mkdir(parents=True, exist_ok=True)
+    queued = set()
+    for p in qdir.glob("*.json"):
+        queued.update(it["key"] for it in json.loads(p.read_text(encoding="utf-8"))["items"])
+    by_system: dict[str, list] = {}
+    for key, req in items:
+        if key not in queued:
+            by_system.setdefault(req["system"], []).append({"key": key, "user": req["user"]})
+    n_existing = len(list(qdir.glob("*.json")))
+    for system, its in by_system.items():
+        for start in range(0, len(its), STANDIN_BATCH):
+            n_existing += 1
+            batch = {"role": role, "model": model, "system": system,
+                     "items": its[start:start + STANDIN_BATCH]}
+            (qdir / f"batch_{n_existing:04d}.json").write_text(
+                json.dumps(batch, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def pending_batches(role: str | None = None) -> list[Path]:
+    roles = [role] if role else [p.name for p in QUEUE_DIR.glob("*") if p.is_dir()]
+    out = []
+    for r in roles:
+        for p in sorted((QUEUE_DIR / r).glob("batch_*.json")):
+            if not p.with_suffix(".responses.jsonl").exists():
+                out.append(p)
+    return out
+
+
+def ingest(role: str | None = None) -> int:
+    """Move stand-in answers (batch_X.responses.jsonl) into the cache; delete consumed files."""
+    n = 0
+    for batch_path in sorted(QUEUE_DIR.glob(f"{role or '*'}/batch_*.json")):
+        resp_path = batch_path.with_suffix(".responses.jsonl")
+        if not resp_path.exists():
+            continue
+        batch = json.loads(batch_path.read_text(encoding="utf-8"))
+        cache = Cache("standin", batch["model"])
+        wanted = {it["key"] for it in batch["items"]}
+        got = {}
+        for line in resp_path.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                rec = json.loads(line)
+                if rec.get("key") in wanted:
+                    resp = rec["response"]
+                    got[rec["key"]] = resp if isinstance(resp, str) else json.dumps(resp, ensure_ascii=False)
+        for k, v in got.items():
+            cache.put(k, v)
+        n += len(got)
+        missing = wanted - set(got)
+        batch_path.unlink()
+        resp_path.unlink()
+        if missing:
+            print(f"  {batch_path.name}: {len(missing)} items unanswered (will be re-queued on next run)")
+    return n
+
+
+def parse_json(text: str | None) -> dict | None:
+    """Tolerant JSON-object parsing: strips code fences / prose around the object."""
+    if not text:
+        return None
+    t = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
+    try:
+        return json.loads(t)
+    except json.JSONDecodeError:
+        m = re.search(r"\{.*\}", t, flags=re.S)
+        if m:
+            try:
+                return json.loads(m.group(0))
+            except json.JSONDecodeError:
+                return None
+    return None
+
+
+if __name__ == "__main__":
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "status"
+    if cmd == "ingest":
+        print(f"ingested {ingest(sys.argv[2] if len(sys.argv) > 2 else None)} responses")
+    for p in sorted(CACHE_DIR.glob("*.jsonl")):
+        print(f"cache {p.name}: {sum(1 for _ in open(p, encoding='utf-8'))} responses")
+    pend = pending_batches()
+    print(f"pending stand-in batches: {len(pend)}", *[f"  {p.relative_to(ROOT)}" for p in pend], sep="\n")

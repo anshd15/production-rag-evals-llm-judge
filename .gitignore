@@ -1,9 +1,14 @@
 .venv/
 __pycache__/
 *.pyc
+.pytest_cache/
 .ipynb_checkpoints/
 .env
 
 # Raw Kaggle dump is ~500MB — never commit it
 data/raw/*
 !data/raw/.gitkeep
+
+# Re-computable caches / transient stand-in queue
+data/processed/emb_cache/
+llm_queue/

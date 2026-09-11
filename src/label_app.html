@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Golden Set Labeller</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a64; --line: #e3e1da;
+    --accent: #1db954; --accent-ink: #0b5d2a; --warn: #c2410c; --warn-bg: #fff1e8;
+    --chip: #f0efe9; --focus: #1d4ed8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header { display: flex; align-items: center; gap: 16px; padding: 12px 24px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 2; }
+  header h1 { font-size: 16px; margin: 0; font-weight: 650; }
+  .tabs { display: flex; gap: 4px; margin-left: 12px; }
+  .tabs button { border: 1px solid var(--line); background: var(--panel); padding: 6px 12px; border-radius: 8px; cursor: pointer; font: inherit; }
+  .tabs button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .progress { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar { width: 180px; height: 8px; background: var(--chip); border-radius: 99px; overflow: hidden; }
+  .bar > div { height: 100%; background: var(--accent); transition: width .2s; }
+  main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .turn { padding: 8px 12px; border-radius: 10px; margin: 6px 0; background: var(--chip); font-size: 14px; }
+  .turn .who { font-size: 12px; font-weight: 600; color: var(--muted); display: block; }
+  .turn.brand { background: #eaf7ef; }
+  .incoming { margin-top: 14px; padding: 14px 16px; border-left: 4px solid var(--accent); background: #fbfbf8; font-size: 17px; border-radius: 0 10px 10px 0; }
+  .incoming .who { font-size: 12px; font-weight: 600; color: var(--accent-ink); display: block; margin-bottom: 2px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .opt { text-align: left; border: 1px solid var(--line); background: var(--panel); border-radius: 9px; padding: 7px 10px; cursor: pointer; font: inherit; font-size: 14px; display: flex; gap: 8px; align-items: baseline; }
+  .opt:hover { border-color: #b9b7ae; }
+  .opt kbd { font: 12px ui-monospace, monospace; background: var(--chip); border-radius: 5px; padding: 1px 6px; color: var(--muted); min-width: 22px; text-align: center; }
+  .opt.on { border-color: var(--accent); background: #eaf7ef; box-shadow: inset 0 0 0 1px var(--accent); }
+  .opt.on.esc { border-color: var(--warn); background: var(--warn-bg); box-shadow: inset 0 0 0 1px var(--warn); }
+  .opt .desc { display: block; color: var(--muted); font-size: 12px; line-height: 1.35; }
+  .section { margin-top: 16px; }
+  .route { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .reasons { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .reasons[hidden] { display: none; }
+  textarea { width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 8px 10px; font: inherit; font-size: 14px; resize: vertical; min-height: 38px; }
+  .actions { display: flex; gap: 8px; margin-top: 14px; align-items: center; }
+  .btn { border: 1px solid var(--line); background: var(--panel); border-radius: 9px; padding: 8px 14px; cursor: pointer; font: inherit; }
+  .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .status { margin-left: auto; font-size: 13px; color: var(--muted); }
+  .status.ok { color: var(--accent-ink); }
+  details { margin-top: 16px; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 13px; }
+  pre.guide { white-space: pre-wrap; font: 12.5px/1.5 ui-monospace, monospace; background: var(--chip); padding: 12px; border-radius: 10px; max-height: 360px; overflow: auto; }
+  .reply-box { margin-top: 12px; padding: 12px 14px; border-radius: 10px; border: 1px dashed #b9b7ae; font-size: 15px; }
+  .reply-box.ref { border-style: solid; border-color: var(--line); background: #fbfbf8; color: #3b3a36; font-size: 14px; }
+  .hint { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Golden Set Labeller</h1>
+  <div class="tabs" role="tablist">
+    <button id="tab-label" class="on" onclick="setMode('label')">1 · Label intents</button>
+    <button id="tab-rate" onclick="setMode('rate')">2 · Rate replies</button>
+  </div>
+  <div class="progress"><span id="prog-text">–</span><div class="bar"><div id="prog-bar" style="width:0"></div></div></div>
+</header>
+<main id="app"><div class="empty">Loading…</div></main>
+
+<script>
+const INTENT_KEYS = ['1','2','3','4','5','6','7','8','9','0','-'];
+const REASON_KEYS = {billing:'b', security:'s', account_specific:'c', troubleshooting_exhausted:'t', repeat_contact:'r', risk:'k'};
+let S = null, mode = 'label', idx = 0, cur = {};
+
+async function load() {
+  S = await (await fetch('/api/state')).json();
+  idx = firstUndone();
+  render();
+}
+function firstUndone() {
+  const list = items(), done = doneMap();
+  const i = list.findIndex(x => !done[key(x)]);
+  return i < 0 ? 0 : i;
+}
+const items = () => mode === 'label' ? S.golden : S.rating_items;
+const doneMap = () => mode === 'label' ? S.labels : S.ratings;
+const key = x => String(mode === 'label' ? x.msg_id : x.item_id);
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('tab-label').classList.toggle('on', m === 'label');
+  document.getElementById('tab-rate').classList.toggle('on', m === 'rate');
+  idx = firstUndone(); render();
+}
+
+function esc(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function convo(ex) {
+  let h = '';
+  for (const t of ex.context || []) {
+    const brand = t.role === 'Spotify';
+    h += `<div class="turn ${brand ? 'brand' : ''}"><span class="who">${brand ? 'SpotifyCares' : (t.role === 'customer' ? 'Customer' : 'Someone else')}</span>${esc(t.text)}</div>`;
+  }
+  h += `<div class="incoming"><span class="who">Incoming customer tweet</span>${esc(ex.text)}</div>`;
+  return h;
+}
+
+function progress() {
+  const list = items(), done = doneMap();
+  const n = list.filter(x => done[key(x)]).length;
+  document.getElementById('prog-text').textContent = list.length ? `${n} / ${list.length} done` : '–';
+  document.getElementById('prog-bar').style.width = list.length ? `${100 * n / list.length}%` : '0';
+}
+
+function render() {
+  progress();
+  const list = items(), app = document.getElementById('app');
+  if (!list.length) {
+    app.innerHTML = `<div class="card empty" style="grid-column:1/-1">${mode === 'rate'
+      ? 'No replies to rate yet. They appear here once the agent has been run on the golden set (data/processed/rating_set.jsonl).'
+      : 'No golden examples found.'}</div>`;
+    return;
+  }
+  const ex = list[idx], prev = doneMap()[key(ex)];
+  mode === 'label' ? renderLabel(app, ex, prev) : renderRate(app, ex, prev);
+}
+
+function renderLabel(app, ex, prev) {
+  cur = prev ? {intent: prev.intent, escalate: prev.escalate, escalation_reason: prev.escalation_reason, note: prev.note || ''}
+             : {intent: null, escalate: null, escalation_reason: null, note: ''};
+  const intents = S.intents.map((it, i) => `
+    <button class="opt ${cur.intent === it.key ? 'on' : ''}" data-intent="${it.key}" title="${esc(it.description)}">
+      <kbd>${INTENT_KEYS[i]}</kbd><span>${esc(it.name)}<span class="desc">${esc(it.description.split(':')[0])}</span></span></button>`).join('');
+  const reasons = S.reasons.map(r => `
+    <button class="opt ${cur.escalation_reason === r.code ? 'on esc' : ''}" data-reason="${r.code}" title="${esc(r.rule)}">
+      <kbd>${REASON_KEYS[r.code]}</kbd><span>${r.code.replace(/_/g, ' ')}</span></button>`).join('');
+  app.innerHTML = `
+    <section class="card">
+      <div class="meta"><span>#${idx + 1} of ${S.golden.length}</span><span>msg ${ex.msg_id}</span>${prev ? '<span>✓ labelled</span>' : ''}</div>
+      ${convo(ex)}
+      <details><summary>Labelling guide</summary><pre class="guide">${esc(S.guide)}</pre></details>
+    </section>
+    <section class="card">
+      <h2>Intent</h2><div class="grid">${intents}</div>
+      <div class="section"><h2>Routing</h2>
+        <div class="route">
+          <button class="opt ${cur.escalate === false ? 'on' : ''}" data-route="auto"><kbd>a</kbd><span>Auto-handle<span class="desc">standard guidance, bot can send</span></span></button>
+          <button class="opt ${cur.escalate === true ? 'on esc' : ''}" data-route="esc"><kbd>e</kbd><span>Escalate<span class="desc">a human must handle it</span></span></button>
+        </div>
+        <div class="reasons" id="reasons" ${cur.escalate ? '' : 'hidden'}>${reasons}</div>
+      </div>
+      <div class="section"><textarea id="note" placeholder="Optional note (ambiguous? why?)">${esc(cur.note)}</textarea></div>
+      <div class="actions">
+        <button class="btn" onclick="move(-1)" ${idx === 0 ? 'disabled' : ''}>← Back</button>
+        <button class="btn primary" id="save" onclick="saveLabel()">Save &amp; next ⏎</button>
+        <button class="btn" onclick="skipToUndone()">Next unlabelled</button>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="hint">Keys: intent 1–9, 0, − · a / e route · reason b s c t r k · Enter save · ← → move</div>
+    </section>`;
+  app.querySelectorAll('[data-intent]').forEach(b => b.onclick = () => { cur.intent = b.dataset.intent; refreshLabel(); });
+  app.querySelectorAll('[data-route]').forEach(b => b.onclick = () => setRoute(b.dataset.route === 'esc'));
+  app.querySelectorAll('[data-reason]').forEach(b => b.onclick = () => { cur.escalation_reason = b.dataset.reason; refreshLabel(); });
+  document.getElementById('note').oninput = e => cur.note = e.target.value;
+}
+
+function setRoute(isEsc) { cur.escalate = isEsc; if (!isEsc) cur.escalation_reason = null; refreshLabel(); }
+
+function refreshLabel() {
+  document.querySelectorAll('[data-intent]').forEach(b => b.classList.toggle('on', b.dataset.intent === cur.intent));
+  document.querySelectorAll('[data-route]').forEach(b => {
+    const on = (b.dataset.route === 'esc') === cur.escalate && cur.escalate !== null;
+    b.classList.toggle('on', on); b.classList.toggle('esc', on && cur.escalate);
+  });
+  document.getElementById('reasons').hidden = !cur.escalate;
+  document.querySelectorAll('[data-reason]').forEach(b => {
+    const on = b.dataset.reason === cur.escalation_reason; b.classList.toggle('on', on); b.classList.toggle('esc', on);
+  });
+}
+
+async function saveLabel() {
+  const st = document.getElementById('status');
+  if (!cur.intent || cur.escalate === null) { st.textContent = 'Pick an intent and a route first'; st.className = 'status'; return; }
+  if (cur.escalate && !cur.escalation_reason) { st.textContent = 'Pick an escalation reason'; st.className = 'status'; return; }
+  const ex = S.golden[idx];
+  const rec = {msg_id: ex.msg_id, ...cur};
+  await fetch('/api/label', {method: 'POST', body: JSON.stringify(rec)});
+  S.labels[String(ex.msg_id)] = rec;
+  move(1);
+}
+
+const CRITERIA = [
+  ['addresses_issue', 'Addresses the issue', 'Engages with what this customer actually asked, not boilerplate'],
+  ['grounded', 'Grounded', 'No invented facts, policies, prices, timelines or promises'],
+  ['correct_next_step', 'Right next step', 'e.g. DM for account lookups, troubleshooting for bugs, clarifying question if vague'],
+  ['tone', 'Tone', 'Friendly, concise, on-brand, tweet-length'],
+  ['safe', 'Safe', 'No public requests for sensitive data, no claims of actions it can\'t have taken'],
+];
+
+function renderRate(app, it, prev) {
+  cur = {};
+  for (const [k] of CRITERIA) cur[k] = prev ? prev[k] : null;
+  cur.would_send = prev ? prev.would_send : null;
+  const rows = CRITERIA.map(([k, name, desc], i) => `
+    <div class="route" style="margin-bottom:6px">
+      <button class="opt ${cur[k] === true ? 'on' : ''}" data-crit="${k}" data-val="1"><kbd>${i + 1}</kbd><span>${name} ✓<span class="desc">${esc(desc)}</span></span></button>
+      <button class="opt ${cur[k] === false ? 'on esc' : ''}" data-crit="${k}" data-val="0"><kbd>⇧${i + 1}</kbd><span>${name} ✗</span></button>
+    </div>`).join('');
+  app.innerHTML = `
+    <section class="card">
+      <div class="meta"><span>#${idx + 1} of ${S.rating_items.length}</span>${prev ? '<span>✓ rated</span>' : ''}</div>
+      ${convo(it)}
+      <div class="reply-box ref"><span class="meta" style="margin:0 0 4px">Reference — what SpotifyCares actually sent</span>${esc(it.brand_reply)}</div>
+      <div class="reply-box"><span class="meta" style="margin:0 0 4px">Draft to review</span>${esc(it.draft)}</div>
+    </section>
+    <section class="card">
+      <h2>Rubric (click ✓ or ✗ for each)</h2>${rows}
+      <div class="section"><h2>Would you send this draft as-is?</h2>
+        <div class="route">
+          <button class="opt ${cur.would_send === true ? 'on' : ''}" data-ws="1"><kbd>y</kbd><span>Yes, send it</span></button>
+          <button class="opt ${cur.would_send === false ? 'on esc' : ''}" data-ws="0"><kbd>n</kbd><span>No, needs edits</span></button>
+        </div></div>
+      <div class="actions">
+        <button class="btn" onclick="move(-1)" ${idx === 0 ? 'disabled' : ''}>← Back</button>
+        <button class="btn primary" onclick="saveRating()">Save &amp; next ⏎</button>
+        <span class="status" id="status"></span>
+      </div>
+      <div class="hint">Keys: 1–5 pass · Shift+1–5 fail · y / n would send · Enter save. The draft could come from the agent or a baseline — you're not told which.</div>
+    </section>`;
+  app.querySelectorAll('[data-crit]').forEach(b => b.onclick = () => { cur[b.dataset.crit] = b.dataset.val === '1'; refreshRate(); });
+  app.querySelectorAll('[data-ws]').forEach(b => b.onclick = () => { cur.would_send = b.dataset.ws === '1'; refreshRate(); });
+}
+
+function refreshRate() {
+  document.querySelectorAll('[data-crit]').forEach(b => {
+    const v = cur[b.dataset.crit], on = v !== null && (b.dataset.val === '1') === v;
+    b.classList.toggle('on', on); b.classList.toggle('esc', on && !v);
+  });
+  document.querySelectorAll('[data-ws]').forEach(b => {
+    const on = cur.would_send !== null && (b.dataset.ws === '1') === cur.would_send;
+    b.classList.toggle('on', on); b.classList.toggle('esc', on && !cur.would_send);
+  });
+}
+
+async function saveRating() {
+  const st = document.getElementById('status');
+  if (CRITERIA.some(([k]) => cur[k] === null) || cur.would_send === null) { st.textContent = 'Rate every criterion + would-send'; return; }
+  const it = S.rating_items[idx];
+  const rec = {item_id: it.item_id, msg_id: it.msg_id, ...cur};
+  await fetch('/api/rating', {method: 'POST', body: JSON.stringify(rec)});
+  S.ratings[String(it.item_id)] = rec;
+  move(1);
+}
+
+function move(d) { idx = Math.max(0, Math.min(items().length - 1, idx + d)); render(); window.scrollTo(0, 0); }
+function skipToUndone() { idx = firstUndone(); render(); }
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'TEXTAREA') { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); mode === 'label' ? saveLabel() : saveRating(); } return; }
+  if (e.key === 'Enter') { e.preventDefault(); return mode === 'label' ? saveLabel() : saveRating(); }
+  if (e.key === 'ArrowLeft') return move(-1);
+  if (e.key === 'ArrowRight') return move(1);
+  if (mode === 'label') {
+    const i = INTENT_KEYS.indexOf(e.key);
+    if (i >= 0 && i < S.intents.length) { cur.intent = S.intents[i].key; return refreshLabel(); }
+    if (e.key === 'a') return setRoute(false);
+    if (e.key === 'e') return setRoute(true);
+    const r = Object.entries(REASON_KEYS).find(([, k]) => k === e.key);
+    if (r && cur.escalate) { cur.escalation_reason = r[0]; refreshLabel(); }
+  } else {
+    const digit = e.code && e.code.startsWith('Digit') ? parseInt(e.code.slice(5)) : NaN;
+    if (digit >= 1 && digit <= CRITERIA.length) { cur[CRITERIA[digit - 1][0]] = !e.shiftKey; return refreshRate(); }
+    if (e.key === 'y') { cur.would_send = true; return refreshRate(); }
+    if (e.key === 'n') { cur.would_send = false; return refreshRate(); }
+  }
+});
+load();
+</script>
+</body>
+</html>
