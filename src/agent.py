@@ -12,6 +12,13 @@ MAX_LEN = 280
 # Hard triggers the model is not trusted to catch on its own.
 RISK_RE = re.compile(r"\b(lawyers?|sue|suing|lawsuit|attorney|legal action|trading standards|"
                      r"ombudsman|kill myself|suicid\w*|self[- ]harm)\b", re.I)
+# Claims about actions the agent cannot perform or verify. SpotifyCares agents write these
+# ("we've just replied to your DM") because they can see the DM inbox; the agent cannot.
+UNVERIFIABLE_CLAIM_RE = re.compile(
+    r"we(?:'ve| have|'ll| will)?\s*(?:just\s+)?(?:replied|responded|sent|answered|got back)"
+    r"[^.!?]{0,40}\b(?:dm|direct message|inbox)|"
+    r"we(?:'ve| have)\s*(?:just\s+)?(?:refunded|issued (?:a|the) refund|cancelled your|"
+    r"canceled your|updated your account|fixed (?:it|this) for you)", re.I)
 
 
 def truncate(reply: str, limit: int = MAX_LEN) -> str:
@@ -41,6 +48,11 @@ def guardrails(pred: dict | None, ex: dict) -> dict:
     if RISK_RE.search(ex["text"]) and not out["escalate"]:
         out.update(escalate=True, escalation_reason="risk", guardrail="risk_keyword",
                    reason="Legal/safety keyword detected; routed to a human.")
+    if UNVERIFIABLE_CLAIM_RE.search(out["reply"]):
+        # Never auto-send a claim about something we cannot check (DM replies, refunds).
+        out.update(escalate=True, guardrail="unverifiable_claim",
+                   escalation_reason=out["escalation_reason"] or "repeat_contact",
+                   reason="Draft claims an action the agent cannot verify; human must confirm.")
     return out
 
 

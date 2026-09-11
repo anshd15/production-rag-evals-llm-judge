@@ -1,0 +1,78 @@
+{
+ "meta": {
+  "split": "golden",
+  "run": "final",
+  "n": 200,
+  "provider": "standin",
+  "agent_model": "claude-haiku-standin",
+  "judge_model": "claude-sonnet-standin",
+  "label_source": "human (golden)"
+ },
+ "systems": {
+  "agent": {
+   "n_labelled": 0,
+   "judged": 200,
+   "reply_pass_rates": {
+    "addresses_issue": 0.835,
+    "grounded": 0.895,
+    "correct_next_step": 0.75,
+    "tone": 0.985,
+    "safe": 1.0,
+    "would_send": 0.73
+   },
+   "would_send": [
+    0.73,
+    0.67,
+    0.79
+   ],
+   "would_send_on_auto_sent": 0.6854838709677419,
+   "reply_over_280": 0.0
+  },
+  "simple": {
+   "n_labelled": 0,
+   "judged": 200,
+   "reply_pass_rates": {
+    "addresses_issue": 0.525,
+    "grounded": 0.585,
+    "correct_next_step": 0.46,
+    "tone": 0.9,
+    "safe": 0.935,
+    "would_send": 0.445
+   },
+   "would_send": [
+    0.445,
+    0.375,
+    0.51
+   ],
+   "would_send_on_auto_sent": 0.4066666666666667,
+   "reply_over_280": 0.01
+  },
+  "trivial": {
+   "n_labelled": 0,
+   "judged": 200,
+   "reply_pass_rates": {
+    "addresses_issue": 0.11,
+    "grounded": 0.985,
+    "correct_next_step": 0.11,
+    "tone": 0.98,
+    "safe": 1.0,
+    "would_send": 0.11
+   },
+   "would_send": [
+    0.11,
+    0.07,
+    0.155
+   ],
+   "would_send_on_auto_sent": 0.11,
+   "reply_over_280": 0.0
+  }
+ },
+ "comparisons": {
+  "would-send vs simple": {
+   "diff": 0.285,
+   "lo": 0.20999999999999996,
+   "hi": 0.365,
+   "p_not_better": 0.0
+  }
+ }
+}
