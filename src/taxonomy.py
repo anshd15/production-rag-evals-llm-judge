@@ -39,7 +39,8 @@ INTENTS = [
         "description": "Something is broken: app crashes, songs won't play or skip, web player "
                        "down, device/Connect/Chromecast/car problems, downloads or saved music "
                        "disappearing, ads malfunctioning (e.g. ad-free time resetting). Includes "
-                       "follow-ups in a troubleshooting thread ('Android 7.0', 'still not working').",
+                       "follow-ups in a troubleshooting thread ('Android 7.0', 'still not working') "
+                       "and vague breakage complaints ('is this thing broken??', 'sort your app out').",
         "examples": ["my downloaded songs keep disappearing", "web player not working in Chrome",
                      "iPhone 7, iOS 11.1, Spotify 8.4.25"],
     },
@@ -92,8 +93,9 @@ INTENTS = [
     {
         "key": "other",
         "name": "Other / unclear",
-        "description": "Off-topic, spam, jokes, non-English, a bare link/image with no context, "
-                       "or too vague to tell what is needed.",
+        "description": "Only when you cannot tell what the message is about or what it needs: "
+                       "off-topic, spam, jokes, non-English, a bare link/image with no complaint. "
+                       "A vague complaint that something is broken is technical_issue, not other.",
         "examples": ["[link]", "lol", "what's everyone listening to?"],
     },
 ]
@@ -103,12 +105,23 @@ ESCALATION_REASONS = [
     {"code": "billing", "rule": "A disputed, unexpected or failed charge, or a refund request."},
     {"code": "security", "rule": "Hacked/compromised account, credentials changed by someone "
                                  "else, or locked out after the self-service reset failed."},
-    {"code": "account_specific", "rule": "Can only be resolved by looking up THIS customer's "
-                                         "account/subscription (e.g. Premium not activating, "
-                                         "Family invite failing, cancelling an account they "
-                                         "can't access, Student verification stuck)."},
-    {"code": "troubleshooting_exhausted", "rule": "The customer says standard fixes (log out/"
-                                                  "restart/reinstall/clear cache) already failed."},
+    {"code": "account_specific", "rule": "THIS customer's own account or subscription state must "
+                                         "be inspected — even when the only sensible public reply "
+                                         "is 'DM us your account email'. E.g. can't log in, "
+                                         "Premium not activating, Family invite failing, Student "
+                                         "verification stuck, cancelling an account they can't "
+                                         "access. A general question about how a plan works ('do "
+                                         "I have to cancel Premium before joining a Family plan?') "
+                                         "is NOT account_specific — that is how_to_usage, "
+                                         "auto-handle."},
+    {"code": "troubleshooting_exhausted", "rule": "The customer explicitly says they ALREADY did "
+                                                  "at least one standard fix (logged out/in, "
+                                                  "restarted the device, reinstalled the app, "
+                                                  "cleared cache) and it still fails. Narrowing "
+                                                  "the problem down (works on another device, only "
+                                                  "over Bluetooth, only on WiFi) or answering "
+                                                  "diagnostic questions (device, OS, version) is "
+                                                  "diagnosis, NOT exhaustion — keep diagnosing."},
     {"code": "repeat_contact", "rule": "Chasing an earlier DM/ticket, or says they already "
                                        "contacted support without an answer."},
     {"code": "risk", "rule": "Legal/regulatory threat, safety or self-harm, harassment, "
@@ -117,14 +130,20 @@ ESCALATION_REASONS = [
 ESCALATION_CODES = [r["code"] for r in ESCALATION_REASONS]
 
 ESCALATION_POLICY = """\
-ESCALATE (a human agent must handle it) if ANY rule applies:
+ROUTING — who owns the case once the reply is sent?
+
+THE TEST: after this reply goes out, does a human at Spotify still have to do something for this
+customer? If yes -> ESCALATE. Asking them to DM their account email so the account can be checked
+means yes: the reply is a safe holding message, but a human still works the case.
+
+ESCALATE (routed to a human agent; your reply is a draft they review) if ANY rule applies:
 {rules}
 
-AUTO-HANDLE otherwise — i.e. the right reply is standard guidance anyone on the team would give
-without looking at the account: how-to answers, first-line troubleshooting steps, content/country
-availability, acknowledging feedback, artist referral to Spotify for Artists, thanks, or asking a
-clarifying question for vague messages. Anger alone is NOT a reason to escalate if the answer is
-standard.""".format(rules="\n".join(f"- {r['code']}: {r['rule']}" for r in ESCALATION_REASONS))
+AUTO-HANDLE otherwise — your reply alone settles it and no human follow-up is implied: how-to
+answers, first-line troubleshooting steps or diagnostic questions, content/country availability,
+acknowledging feedback, artist referral to Spotify for Artists, thanks, or a clarifying question
+for a vague message. Anger alone is NOT a reason to escalate if the answer is standard.\
+""".format(rules="\n".join(f"- {r['code']}: {r['rule']}" for r in ESCALATION_REASONS))
 
 
 def intents_block() -> str:

@@ -1,0 +1,793 @@
+{
+ "meta": {
+  "split": "dev",
+  "run": "v1b",
+  "n": 250,
+  "provider": "standin",
+  "agent_model": "claude-haiku-standin",
+  "judge_model": "claude-sonnet-standin",
+  "label_source": "silver (LLM)",
+  "rescored_from": "v1"
+ },
+ "systems": {
+  "agent": {
+   "n_labelled": 250,
+   "intent_accuracy": [
+    0.824,
+    0.776,
+    0.8680999999999999
+   ],
+   "intent_macro_f1": [
+    0.8041831799890761,
+    0.7405959908007199,
+    0.8519521352395939
+   ],
+   "escalation": {
+    "recall": 0.8591549295774648,
+    "precision": 0.782051282051282,
+    "automation_rate": 0.688,
+    "unsafe_auto_rate": 0.04,
+    "needless_escalation_rate": 0.068
+   },
+   "escalation_recall_ci": [
+    0.8591549295774648,
+    0.7777363184079602,
+    0.9333606557377049
+   ],
+   "confusion": [
+    [
+     11,
+     2,
+     0,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     4,
+     12,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     1,
+     19,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     2,
+     0,
+     2,
+     70,
+     0,
+     1,
+     4,
+     0,
+     0,
+     0,
+     10
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     10,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     24,
+     1,
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     26,
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     7,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     18,
+     1
+    ],
+    [
+     0,
+     1,
+     0,
+     0,
+     1,
+     0,
+     2,
+     0,
+     0,
+     0,
+     6
+    ]
+   ],
+   "per_class": {
+    "billing_payment": {
+     "support": 16,
+     "precision": 0.6111111111111112,
+     "recall": 0.6875
+    },
+    "subscription_plan": {
+     "support": 18,
+     "precision": 0.75,
+     "recall": 0.6666666666666666
+    },
+    "account_access": {
+     "support": 20,
+     "precision": 0.7916666666666666,
+     "recall": 0.95
+    },
+    "technical_issue": {
+     "support": 89,
+     "precision": 0.9459459459459459,
+     "recall": 0.7865168539325843
+    },
+    "how_to_usage": {
+     "support": 11,
+     "precision": 0.9090909090909091,
+     "recall": 0.9090909090909091
+    },
+    "content_availability": {
+     "support": 26,
+     "precision": 0.9230769230769231,
+     "recall": 0.9230769230769231
+    },
+    "feedback_feature_request": {
+     "support": 28,
+     "precision": 0.7647058823529411,
+     "recall": 0.9285714285714286
+    },
+    "artist_creator": {
+     "support": 9,
+     "precision": 1.0,
+     "recall": 0.7777777777777778
+    },
+    "dm_status_followup": {
+     "support": 3,
+     "precision": 0.75,
+     "recall": 1.0
+    },
+    "praise_thanks": {
+     "support": 20,
+     "precision": 0.9473684210526315,
+     "recall": 0.9
+    },
+    "other": {
+     "support": 10,
+     "precision": 0.35294117647058826,
+     "recall": 0.6
+    }
+   },
+   "judged": 250,
+   "reply_pass_rates": {
+    "addresses_issue": 0.856,
+    "grounded": 0.896,
+    "correct_next_step": 0.764,
+    "tone": 0.992,
+    "safe": 0.988,
+    "would_send": 0.752
+   },
+   "would_send": [
+    0.752,
+    0.692,
+    0.804
+   ],
+   "would_send_on_auto_sent": 0.7558139534883721,
+   "good_automation_rate": [
+    0.492,
+    0.428,
+    0.552
+   ],
+   "bad_auto_send_rate": [
+    0.196,
+    0.152,
+    0.252
+   ],
+   "reply_over_280": 0.0
+  },
+  "simple": {
+   "n_labelled": 250,
+   "intent_accuracy": [
+    0.592,
+    0.528,
+    0.656
+   ],
+   "intent_macro_f1": [
+    0.3978065384531338,
+    0.3348512440988077,
+    0.45907134926149545
+   ],
+   "escalation": {
+    "recall": 0.39436619718309857,
+    "precision": 0.6086956521739131,
+    "automation_rate": 0.816,
+    "unsafe_auto_rate": 0.172,
+    "needless_escalation_rate": 0.072
+   },
+   "escalation_recall_ci": [
+    0.39436619718309857,
+    0.2948529411764706,
+    0.5147288602941176
+   ],
+   "confusion": [
+    [
+     3,
+     4,
+     1,
+     6,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     2,
+     10,
+     1,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     2,
+     0
+    ],
+    [
+     0,
+     2,
+     13,
+     4,
+     1,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     78,
+     0,
+     2,
+     2,
+     0,
+     0,
+     6,
+     1
+    ],
+    [
+     1,
+     2,
+     0,
+     6,
+     1,
+     0,
+     1,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     7,
+     0,
+     17,
+     1,
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     9,
+     0,
+     1,
+     13,
+     0,
+     0,
+     4,
+     1
+    ],
+    [
+     0,
+     0,
+     1,
+     5,
+     0,
+     1,
+     1,
+     0,
+     1,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     2,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0
+    ],
+    [
+     0,
+     0,
+     2,
+     5,
+     0,
+     0,
+     1,
+     0,
+     1,
+     11,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     5,
+     0,
+     0,
+     2,
+     0,
+     0,
+     1,
+     2
+    ]
+   ],
+   "per_class": {
+    "billing_payment": {
+     "support": 16,
+     "precision": 0.5,
+     "recall": 0.1875
+    },
+    "subscription_plan": {
+     "support": 18,
+     "precision": 0.5555555555555556,
+     "recall": 0.5555555555555556
+    },
+    "account_access": {
+     "support": 20,
+     "precision": 0.7222222222222222,
+     "recall": 0.65
+    },
+    "technical_issue": {
+     "support": 89,
+     "precision": 0.6,
+     "recall": 0.8764044943820225
+    },
+    "how_to_usage": {
+     "support": 11,
+     "precision": 0.5,
+     "recall": 0.09090909090909091
+    },
+    "content_availability": {
+     "support": 26,
+     "precision": 0.8095238095238095,
+     "recall": 0.6538461538461539
+    },
+    "feedback_feature_request": {
+     "support": 28,
+     "precision": 0.5909090909090909,
+     "recall": 0.4642857142857143
+    },
+    "artist_creator": {
+     "support": 9,
+     "precision": null,
+     "recall": 0.0
+    },
+    "dm_status_followup": {
+     "support": 3,
+     "precision": 0.0,
+     "recall": 0.0
+    },
+    "praise_thanks": {
+     "support": 20,
+     "precision": 0.4074074074074074,
+     "recall": 0.55
+    },
+    "other": {
+     "support": 10,
+     "precision": 0.5,
+     "recall": 0.2
+    }
+   },
+   "judged": 250,
+   "reply_pass_rates": {
+    "addresses_issue": 0.572,
+    "grounded": 0.712,
+    "correct_next_step": 0.528,
+    "tone": 0.936,
+    "safe": 0.932,
+    "would_send": 0.508
+   },
+   "would_send": [
+    0.508,
+    0.448,
+    0.572
+   ],
+   "would_send_on_auto_sent": 0.4852941176470588,
+   "good_automation_rate": [
+    0.304,
+    0.252,
+    0.36
+   ],
+   "bad_auto_send_rate": [
+    0.512,
+    0.452,
+    0.568
+   ],
+   "reply_over_280": 0.0
+  },
+  "trivial": {
+   "n_labelled": 250,
+   "intent_accuracy": [
+    0.356,
+    0.2999,
+    0.42
+   ],
+   "intent_macro_f1": [
+    0.047733976937516756,
+    0.04194725028058362,
+    0.05549132947976878
+   ],
+   "escalation": {
+    "recall": 0.0,
+    "precision": NaN,
+    "automation_rate": 1.0,
+    "unsafe_auto_rate": 0.284,
+    "needless_escalation_rate": 0.0
+   },
+   "escalation_recall_ci": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "confusion": [
+    [
+     0,
+     0,
+     0,
+     16,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     18,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     20,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     89,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     11,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     26,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     28,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     9,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     3,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     20,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    [
+     0,
+     0,
+     0,
+     10,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   ],
+   "per_class": {
+    "billing_payment": {
+     "support": 16,
+     "precision": null,
+     "recall": 0.0
+    },
+    "subscription_plan": {
+     "support": 18,
+     "precision": null,
+     "recall": 0.0
+    },
+    "account_access": {
+     "support": 20,
+     "precision": null,
+     "recall": 0.0
+    },
+    "technical_issue": {
+     "support": 89,
+     "precision": 0.356,
+     "recall": 1.0
+    },
+    "how_to_usage": {
+     "support": 11,
+     "precision": null,
+     "recall": 0.0
+    },
+    "content_availability": {
+     "support": 26,
+     "precision": null,
+     "recall": 0.0
+    },
+    "feedback_feature_request": {
+     "support": 28,
+     "precision": null,
+     "recall": 0.0
+    },
+    "artist_creator": {
+     "support": 9,
+     "precision": null,
+     "recall": 0.0
+    },
+    "dm_status_followup": {
+     "support": 3,
+     "precision": null,
+     "recall": 0.0
+    },
+    "praise_thanks": {
+     "support": 20,
+     "precision": null,
+     "recall": 0.0
+    },
+    "other": {
+     "support": 10,
+     "precision": null,
+     "recall": 0.0
+    }
+   },
+   "judged": 250,
+   "reply_pass_rates": {
+    "addresses_issue": 0.064,
+    "grounded": 0.344,
+    "correct_next_step": 0.064,
+    "tone": 0.716,
+    "safe": 1.0,
+    "would_send": 0.064
+   },
+   "would_send": [
+    0.064,
+    0.036,
+    0.092
+   ],
+   "would_send_on_auto_sent": 0.064,
+   "good_automation_rate": [
+    0.064,
+    0.036,
+    0.092
+   ],
+   "bad_auto_send_rate": [
+    0.936,
+    0.908,
+    0.964
+   ],
+   "reply_over_280": 0.0
+  }
+ },
+ "comparisons": {
+  "intent accuracy vs simple": {
+   "diff": 0.23199999999999998,
+   "lo": 0.15600000000000003,
+   "hi": 0.31199999999999994,
+   "p_not_better": 0.0
+  },
+  "intent accuracy vs trivial": {
+   "diff": 0.46799999999999997,
+   "lo": 0.38400000000000006,
+   "hi": 0.5480999999999999,
+   "p_not_better": 0.0
+  },
+  "would-send vs simple": {
+   "diff": 0.244,
+   "lo": 0.16800000000000004,
+   "hi": 0.30800000000000005,
+   "p_not_better": 0.0
+  }
+ }
+}

@@ -57,7 +57,9 @@ class Handler(BaseHTTPRequestHandler):
                 "intents": INTENTS,
                 "reasons": ESCALATION_REASONS,
                 "guide": LABELING_GUIDE,
-                "rating_items": read_jsonl(RATING_SET) if RATING_SET.exists() else [],
+                # the system that wrote each draft is withheld from the rater
+                "rating_items": [{k: v for k, v in it.items() if k != "system"}
+                                 for it in read_jsonl(RATING_SET)] if RATING_SET.exists() else [],
                 "ratings": _latest(RATINGS, "item_id"),
             }
             return self._send(json.dumps(state, ensure_ascii=False).encode("utf-8"), "application/json")
