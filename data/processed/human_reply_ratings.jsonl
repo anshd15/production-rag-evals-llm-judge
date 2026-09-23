@@ -1,0 +1,2 @@
+{"item_id": "93902:agent", "msg_id": 93902, "addresses_issue": true, "grounded": true, "correct_next_step": true, "tone": true, "safe": true, "would_send": true, "rater": "human", "ts": "2026-09-16T00:54:36"}
+{"item_id": "458058:simple", "msg_id": 458058, "addresses_issue": true, "grounded": true, "correct_next_step": true, "tone": true, "safe": true, "would_send": true, "rater": "human", "ts": "2026-09-16T00:55:22"}

@@ -55,6 +55,7 @@
   .reply-box.ref { border-style: solid; border-color: var(--line); background: #fbfbf8; color: #3b3a36; font-size: 14px; }
   .hint { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
   .empty { padding: 40px; text-align: center; color: var(--muted); }
+  .sugtag { background: #fff6e5; color: #8a5a00; border: 1px solid #f0d9a8; border-radius: 6px; padding: 1px 8px; font-weight: 600; }
   :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 </style>
 </head>
@@ -72,7 +73,7 @@
 <script>
 const INTENT_KEYS = ['1','2','3','4','5','6','7','8','9','0','-'];
 const REASON_KEYS = {billing:'b', security:'s', account_specific:'c', troubleshooting_exhausted:'t', repeat_contact:'r', risk:'k'};
-let S = null, mode = 'label', idx = 0, cur = {};
+let S = null, mode = 'label', idx = 0, cur = {}, suggested = null;
 
 async function load() {
   S = await (await fetch('/api/state')).json();
@@ -128,8 +129,11 @@ function render() {
 }
 
 function renderLabel(app, ex, prev) {
+  const sug = S.suggestions ? S.suggestions[String(ex.msg_id)] : null;
+  suggested = sug || null;
   cur = prev ? {intent: prev.intent, escalate: prev.escalate, escalation_reason: prev.escalation_reason, note: prev.note || ''}
-             : {intent: null, escalate: null, escalation_reason: null, note: ''};
+       : (sug ? {intent: sug.intent, escalate: sug.escalate, escalation_reason: sug.escalation_reason, note: ''}
+              : {intent: null, escalate: null, escalation_reason: null, note: ''});
   const intents = S.intents.map((it, i) => `
     <button class="opt ${cur.intent === it.key ? 'on' : ''}" data-intent="${it.key}" title="${esc(it.description)}">
       <kbd>${INTENT_KEYS[i]}</kbd><span>${esc(it.name)}<span class="desc">${esc(it.description.split(':')[0])}</span></span></button>`).join('');
@@ -138,7 +142,7 @@ function renderLabel(app, ex, prev) {
       <kbd>${REASON_KEYS[r.code]}</kbd><span>${r.code.replace(/_/g, ' ')}</span></button>`).join('');
   app.innerHTML = `
     <section class="card">
-      <div class="meta"><span>#${idx + 1} of ${S.golden.length}</span><span>msg ${ex.msg_id}</span>${prev ? '<span>✓ labelled</span>' : ''}</div>
+      <div class="meta"><span>#${idx + 1} of ${S.golden.length}</span><span>msg ${ex.msg_id}</span>${prev ? '<span>✓ labelled</span>' : ''}${sug ? '<span class="sugtag">AI suggestion pre-filled — check it</span>' : '<span>blind (no suggestion)</span>'}</div>
       ${convo(ex)}
       <details><summary>Labelling guide</summary><pre class="guide">${esc(S.guide)}</pre></details>
     </section>
@@ -185,7 +189,11 @@ async function saveLabel() {
   if (!cur.intent || cur.escalate === null) { st.textContent = 'Pick an intent and a route first'; st.className = 'status'; return; }
   if (cur.escalate && !cur.escalation_reason) { st.textContent = 'Pick an escalation reason'; st.className = 'status'; return; }
   const ex = S.golden[idx];
-  const rec = {msg_id: ex.msg_id, ...cur};
+  const source = !suggested ? 'blind'
+    : (suggested.intent === cur.intent && suggested.escalate === cur.escalate
+       && (suggested.escalation_reason || null) === (cur.escalation_reason || null)
+       ? 'suggested_accepted' : 'suggested_overridden');
+  const rec = {msg_id: ex.msg_id, ...cur, source};
   await fetch('/api/label', {method: 'POST', body: JSON.stringify(rec)});
   S.labels[String(ex.msg_id)] = rec;
   move(1);

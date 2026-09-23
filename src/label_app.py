@@ -6,6 +6,13 @@ Labels are appended to data/processed/golden_labels.jsonl and ratings to
 data/processed/human_reply_ratings.jsonl as you go (later lines win), so you can
 stop and resume at any time. The brand's real reply is deliberately hidden while
 labelling: you label from exactly what the agent sees.
+
+Labelling mode (see decision log #29):
+  - the first BLIND_FIRST examples are labelled blind, no suggestion shown;
+  - after that, the LLM's suggested label is pre-filled and the human accepts or
+    overrides it. Every label still needs an explicit keypress, and each record
+    stores `source` (blind / suggested_accepted / suggested_overridden) so the
+    report can quote the override rate and flag the anchoring risk.
 """
 import json
 import sys
@@ -22,7 +29,9 @@ PORT = 8765
 LABELS = PROCESSED / "golden_labels.jsonl"
 RATING_SET = PROCESSED / "rating_set.jsonl"
 RATINGS = PROCESSED / "human_reply_ratings.jsonl"
+SUGGESTIONS = PROCESSED / "golden_silver_labels.jsonl"
 HTML = Path(__file__).with_name("label_app.html")
+BLIND_FIRST = 50  # examples labelled with no suggestion shown, to measure anchoring
 
 
 def _latest(path: Path, key: str) -> dict:
@@ -51,8 +60,18 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(HTML.read_bytes(), "text/html; charset=utf-8")
         if self.path == "/api/state":
             golden = [{k: ex[k] for k in ("msg_id", "context", "text")} for ex in read_jsonl(GOLDEN_FILE)]
+            # Suggestions are withheld for the first BLIND_FIRST examples so the
+            # blind and suggestion-assisted halves can be compared.
+            sug = {str(r["msg_id"]): {"intent": r["intent"], "escalate": r["escalate"],
+                                      "escalation_reason": r["escalation_reason"]}
+                   for r in read_jsonl(SUGGESTIONS)} if SUGGESTIONS.exists() else {}
+            suggestions = {str(ex["msg_id"]): sug[str(ex["msg_id"])]
+                           for i, ex in enumerate(golden)
+                           if i >= BLIND_FIRST and str(ex["msg_id"]) in sug}
             state = {
                 "golden": golden,
+                "suggestions": suggestions,
+                "blind_first": BLIND_FIRST,
                 "labels": _latest(LABELS, "msg_id"),
                 "intents": INTENTS,
                 "reasons": ESCALATION_REASONS,
@@ -71,7 +90,8 @@ class Handler(BaseHTTPRequestHandler):
             _append(LABELS, {"msg_id": int(rec["msg_id"]), "intent": rec["intent"],
                              "escalate": bool(rec["escalate"]),
                              "escalation_reason": rec.get("escalation_reason") if rec["escalate"] else None,
-                             "note": rec.get("note", ""), "labeller": "human"})
+                             "note": rec.get("note", ""), "labeller": "human",
+                             "source": rec.get("source", "blind")})
         elif self.path == "/api/rating":
             _append(RATINGS, rec | {"rater": "human"})
         else:
