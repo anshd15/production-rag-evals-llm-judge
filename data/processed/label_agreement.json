@@ -1,0 +1,7 @@
+{
+ "n": 200,
+ "intent_agreement": 0.83,
+ "intent_kappa": 0.8038084246970572,
+ "escalate_agreement": 0.91,
+ "escalate_kappa": 0.7916666666666667
+}

@@ -1,0 +1,203 @@
+{"msg_id": 521815, "intent": "subscription_plan", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "ts": "2026-09-16T00:37:43"}
+{"msg_id": 2551349, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:38:10"}
+{"msg_id": 473421, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:38:58"}
+{"msg_id": 67730, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:39:38"}
+{"msg_id": 2834997, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:40:34"}
+{"msg_id": 104091, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:40:48"}
+{"msg_id": 500933, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:41:28"}
+{"msg_id": 2919270, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:41:39"}
+{"msg_id": 564528, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "ts": "2026-09-16T00:43:07"}
+{"msg_id": 564528, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "ts": "2026-09-16T00:43:12"}
+{"msg_id": 2822724, "intent": "artist_creator", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:44:18"}
+{"msg_id": 527821, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:44:45"}
+{"msg_id": 566293, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "ts": "2026-09-16T00:45:40"}
+{"msg_id": 2665939, "intent": "dm_status_followup", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:46:45"}
+{"msg_id": 2846491, "intent": "dm_status_followup", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:47:12"}
+{"msg_id": 177417, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:48:19"}
+{"msg_id": 2822717, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:50:12"}
+{"msg_id": 446892, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:50:44"}
+{"msg_id": 2848338, "intent": "dm_status_followup", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:51:20"}
+{"msg_id": 2857507, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:51:38"}
+{"msg_id": 2941486, "intent": "dm_status_followup", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "ts": "2026-09-16T00:52:06"}
+{"msg_id": 572664, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:08:59"}
+{"msg_id": 1666501, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:09:38"}
+{"msg_id": 2968461, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:11:25"}
+{"msg_id": 2876101, "intent": "technical_issue", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:12:29"}
+{"msg_id": 102201, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:13:08"}
+{"msg_id": 2038951, "intent": "dm_status_followup", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:13:30"}
+{"msg_id": 2912541, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:15:40"}
+{"msg_id": 2907360, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:17:00"}
+{"msg_id": 461455, "intent": "artist_creator", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:18:53"}
+{"msg_id": 461455, "intent": "artist_creator", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:19:02"}
+{"msg_id": 1347519, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:19:18"}
+{"msg_id": 563492, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:21:19"}
+{"msg_id": 2967118, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:22:06"}
+{"msg_id": 2862777, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:22:27"}
+{"msg_id": 106339, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:23:01"}
+{"msg_id": 562456, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:24:42"}
+{"msg_id": 2929219, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:25:37"}
+{"msg_id": 93864, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:26:13"}
+{"msg_id": 1822606, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:27:27"}
+{"msg_id": 566318, "intent": "artist_creator", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:28:17"}
+{"msg_id": 1915244, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:28:52"}
+{"msg_id": 680507, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:29:05"}
+{"msg_id": 83654, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:29:48"}
+{"msg_id": 1842973, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:30:14"}
+{"msg_id": 2986431, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:30:50"}
+{"msg_id": 104147, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:31:26"}
+{"msg_id": 2975087, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:32:12"}
+{"msg_id": 601854, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:32:25"}
+{"msg_id": 2817500, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:33:36"}
+{"msg_id": 2699535, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:34:34"}
+{"msg_id": 532742, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "blind", "ts": "2026-09-23T20:34:58"}
+{"msg_id": 1384526, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:02"}
+{"msg_id": 2815043, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:05"}
+{"msg_id": 2820159, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:05"}
+{"msg_id": 2929835, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:06"}
+{"msg_id": 506012, "intent": "how_to_usage", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:06"}
+{"msg_id": 2784996, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:07"}
+{"msg_id": 522723, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:07"}
+{"msg_id": 2920599, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:26"}
+{"msg_id": 538058, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:28"}
+{"msg_id": 2919285, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:35:30"}
+{"msg_id": 249713, "intent": "dm_status_followup", "escalate": true, "escalation_reason": "repeat_contact", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:00"}
+{"msg_id": 555492, "intent": "technical_issue", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:00"}
+{"msg_id": 555492, "intent": "technical_issue", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 515441, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 2960669, "intent": "account_access", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 86365, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 2815056, "intent": "account_access", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 571351, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:01"}
+{"msg_id": 2987397, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:02"}
+{"msg_id": 2913809, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:02"}
+{"msg_id": 2816730, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:02"}
+{"msg_id": 1008396, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:02"}
+{"msg_id": 560960, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:02"}
+{"msg_id": 588864, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:03"}
+{"msg_id": 507374, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:03"}
+{"msg_id": 486956, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:03"}
+{"msg_id": 1666504, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:03"}
+{"msg_id": 2862724, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:03"}
+{"msg_id": 2201001, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:04"}
+{"msg_id": 540365, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:04"}
+{"msg_id": 510519, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:04"}
+{"msg_id": 1034898, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:04"}
+{"msg_id": 569605, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:04"}
+{"msg_id": 2898305, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:05"}
+{"msg_id": 2854464, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:05"}
+{"msg_id": 572074, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:05"}
+{"msg_id": 450856, "intent": "technical_issue", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:05"}
+{"msg_id": 2850056, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:05"}
+{"msg_id": 2815941, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 450877, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:06"}
+{"msg_id": 492411, "intent": "artist_creator", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2861209, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 595184, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2133712, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 467609, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 515464, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 515464, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 515464, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 515464, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 1384529, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 1384529, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2883728, "intent": "billing_payment", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2959340, "intent": "content_availability", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2963376, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 560971, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 560971, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 560971, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 560971, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 560971, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2987399, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:07"}
+{"msg_id": 2826944, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2931615, "intent": "artist_creator", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 1983205, "intent": "artist_creator", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2851456, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2917855, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2917855, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2917855, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2917855, "intent": "technical_issue", "escalate": true, "escalation_reason": "troubleshooting_exhausted", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 594072, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 594072, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2632590, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 578818, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 97664, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 97664, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 573739, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 573739, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 573739, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 573739, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:08"}
+{"msg_id": 2878327, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2861218, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2934000, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2920652, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2520088, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2848314, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2848314, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2848314, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2848314, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2848314, "intent": "how_to_usage", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 455653, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2859060, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2466894, "intent": "technical_issue", "escalate": true, "escalation_reason": "repeat_contact", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 781170, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2861215, "intent": "account_access", "escalate": true, "escalation_reason": "security", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 499269, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:09"}
+{"msg_id": 2928151, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:10"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:11"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 458058, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 2916518, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 2921967, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 563522, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 2859037, "intent": "subscription_plan", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:12"}
+{"msg_id": 2933212, "intent": "account_access", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:13"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1532721, "intent": "praise_thanks", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 448834, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 79384, "intent": "technical_issue", "escalate": true, "escalation_reason": "risk", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 2823500, "intent": "account_access", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 2972963, "intent": "other", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 2956285, "intent": "account_access", "escalate": true, "escalation_reason": "account_specific", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 541675, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 541675, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 541675, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:14"}
+{"msg_id": 1157899, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:15"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 508823, "intent": "billing_payment", "escalate": true, "escalation_reason": "billing", "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:16"}
+{"msg_id": 499265, "intent": "subscription_plan", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:17"}
+{"msg_id": 2964680, "intent": "technical_issue", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:18"}
+{"msg_id": 568943, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:19"}
+{"msg_id": 507445, "intent": "account_access", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:22"}
+{"msg_id": 70700, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:46"}
+{"msg_id": 70700, "intent": "feedback_feature_request", "escalate": false, "escalation_reason": null, "note": "", "labeller": "human", "source": "suggested_accepted", "ts": "2026-09-23T20:36:48"}

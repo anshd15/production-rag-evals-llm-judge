@@ -48,7 +48,8 @@ MODELS = {
 
 
 def provider() -> str:
-    p = (os.getenv("LLM_PROVIDER") or "").strip().lower()
+    # tolerate "gemini   # comment" and stray quotes coming from .env
+    p = (os.getenv("LLM_PROVIDER") or "").split("#")[0].strip().strip("'\"").lower()
     if not p:
         p = "gemini" if os.getenv("GEMINI_API_KEY") else "standin"
     if p not in MODELS:
