@@ -1,6 +1,7 @@
 """The support agent: retrieve similar past cases -> one LLM call -> deterministic guardrails."""
 import re
 
+from src.input_guards import screen
 from src.llm import complete_batch, parse_json
 from src.prompts import AGENT_SYSTEM, agent_user
 from src.retrieval import Retriever
@@ -48,6 +49,13 @@ def guardrails(pred: dict | None, ex: dict) -> dict:
     if RISK_RE.search(ex["text"]) and not out["escalate"]:
         out.update(escalate=True, escalation_reason="risk", guardrail="risk_keyword",
                    reason="Legal/safety keyword detected; routed to a human.")
+    flags = screen(ex["text"])
+    if flags["prompt_injection"]:
+        # Someone is steering the agent, not asking for support.
+        out.update(escalate=True, escalation_reason="risk", guardrail="prompt_injection",
+                   reason="Message tries to override the agent's instructions; routed to a human.")
+    if flags["pii"]:
+        out["pii_detected"] = flags["pii"]
     if UNVERIFIABLE_CLAIM_RE.search(out["reply"]):
         # Never auto-send a claim about something we cannot check (DM replies, refunds).
         out.update(escalate=True, guardrail="unverifiable_claim",
