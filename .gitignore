@@ -12,3 +12,6 @@ data/raw/*
 # Re-computable caches / transient stand-in queue
 data/processed/emb_cache/
 llm_queue/
+
+# runtime feedback store
+data/feedback/

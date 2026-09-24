@@ -21,10 +21,18 @@ from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from src import agent
+from src.feedback import ACTIONS, record_decision, record_outcome
 from src.observability import METRICS, log_event, render_prometheus
 
 app = FastAPI(title="Handoff", version="0.2.0")
 _retriever = None
+
+
+class Outcome(BaseModel):
+    request_id: str
+    action: str = Field(description=" | ".join(ACTIONS))
+    final_reply: str = ""
+    note: str = ""
 
 
 class Turn(BaseModel):
@@ -85,6 +93,26 @@ def triage(req: TriageRequest):
     if pred.get("guardrail"):
         METRICS[f"guardrail_{pred['guardrail']}"] += 1
     METRICS["latency_ms_total"] += latency_ms
+    record_decision(request_id, pred)
     log_event("triage", request_id=request_id, intent=pred["intent"],
               escalate=pred["escalate"], guardrail=pred.get("guardrail"), ms=latency_ms)
     return pred | {"request_id": request_id, "latency_ms": latency_ms}
+
+
+@app.post("/feedback")
+def feedback(outcome: Outcome):
+    """What the human agent did with the draft. This is the only signal that
+    tells us whether quality is holding up in production."""
+    try:
+        record_outcome(outcome.request_id, outcome.action, outcome.final_reply, outcome.note)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    METRICS[f"outcome_{outcome.action}"] += 1
+    log_event("feedback", request_id=outcome.request_id, action=outcome.action)
+    return {"recorded": True}
+
+
+@app.get("/feedback/report")
+def feedback_report():
+    from src.feedback import report
+    return report()
