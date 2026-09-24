@@ -28,6 +28,27 @@ are approved by the judge **73.0%** of the time vs **44.5%** for a TF-IDF neares
 and **11.0%** for the most common canned reply (+28.5pp over the simple baseline, 95% CI
 [+21.0, +36.5]).
 
+## Run it as a service
+
+```bash
+pip install fastapi "uvicorn[standard]"
+uvicorn src.service:app --port 8000          # or: docker compose up
+curl -X POST localhost:8000/triage -H "Content-Type: application/json"      -d '{"text": "charged twice for premium this month, sort it out"}'
+python -m src.smoke --n 20 --concurrency 4   # contract + latency check, non-zero exit on failure
+```
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /triage` | intent, routing decision + reason, drafted reply, request id, latency |
+| `POST /feedback` | what the human did with the draft: accepted / edited / rejected |
+| `GET /feedback/report` | live accept rate and the intents whose drafts get edited most |
+| `GET /metrics` | automation rate, escalation rate, guardrail fires, average latency |
+| `GET /healthz`, `/readyz` | liveness, and whether the retrieval index is warm |
+
+The index builds on first request (~2 min), so `/readyz` reports cold until then.
+Guardrails run on the way in (instruction-override attempts, PII redaction with Luhn-checked
+card numbers) and on the way out (unverifiable claims, legal/self-harm keywords, 280-char cap).
+
 ## Reproduce the headline results (< 15 min, no API key)
 
 ```bash
