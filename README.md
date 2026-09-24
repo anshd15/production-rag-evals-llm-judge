@@ -1,6 +1,6 @@
-# Hiver Support Agent — SpotifyCares
+# Handoff — a support agent that knows when to step aside
 
-An AI support agent for **SpotifyCares** built from the Kaggle *Customer Support on Twitter*
+A retrieval-augmented support agent for **SpotifyCares**, built from the Kaggle *Customer Support on Twitter*
 dataset. For every incoming customer tweet it:
 
 1. **classifies the intent** into one of 11 intents derived from the data,

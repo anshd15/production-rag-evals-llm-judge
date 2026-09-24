@@ -1,10 +1,10 @@
 # Decision log
 
-Non-obvious decisions, in the order they were made, with the reason. (Bullets, per the brief.)
+Non-obvious decisions, in the order they were made, with the reason. (Bullets.)
 
 ## Data & scope
 
-1. **Brand = SpotifyCares.** A digital subscription product is the closest analogue to Hiver's SaaS/e-commerce customers; ~27k threads; replies mix concrete troubleshooting ("log out > restart > log back in") with account-specific routing ("DM us your email"), so *both* auto-handling and escalation occur naturally. Airlines (Delta, BA) were the runner-up: higher stakes, but replies are mostly "DM your confirmation code", which makes "grounded reply" nearly trivial.
+1. **Brand = SpotifyCares.** A digital subscription product is the closest analogue to the SaaS and e-commerce teams this kind of agent gets deployed for; ~27k threads; replies mix concrete troubleshooting ("log out > restart > log back in") with account-specific routing ("DM us your email"), so *both* auto-handling and escalation occur naturally. Airlines (Delta, BA) were the runner-up: higher stakes, but replies are mostly "DM your confirmation code", which makes "grounded reply" nearly trivial.
 2. **Unit of work = every inbound customer tweet the brand answered, not only thread openers.** Follow-ups ("still not working", "Android 7.0", "thanks!") are ~30% of traffic and are exactly where escalation decisions get hard. The agent sees up to 4 previous turns.
 3. **Time-based split, not random.** Threads starting on/after 2017-11-25 form the evaluation pool; everything earlier is history. A random split would let the agent retrieve replies written *after* the message it is answering.
 4. **Strict retrieval cutoff on top of the thread split.** 566 "history" messages were sent after the cutoff (follow-ups in threads that started earlier). The retrieval index only uses messages sent before 2017-11-25.
