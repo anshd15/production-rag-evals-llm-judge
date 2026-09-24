@@ -1,0 +1,10 @@
+.venv/
+.git/
+data/raw/
+data/processed/emb_cache/
+llm_queue/
+runs/
+labelling/
+tests/
+reports/
+**/__pycache__/
