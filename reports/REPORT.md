@@ -215,7 +215,17 @@ is the routing metrics, which are scored against human labels.
 
 The set-up is in place: 60 drafts sampled across the agent and both baselines, the system that
 wrote each one withheld from the rater, and `src/judge_agreement.py` computing per-criterion
-agreement and κ once ratings exist.
+agreement and κ once ratings exist. Below 30 ratings it now writes "not established" instead of a
+number — the earlier version published a κ computed on n=2.
+
+**What can be checked without a human** (`reports/judge_robustness.md`): the judge approves the
+agent's longer drafts 8.0pp more often than its shorter ones (77.0% vs 69.0% either side of the
+80-character median). That is consistent with verbosity bias, but confounded — a longer reply
+often does address more of the question — so it is a flag for the human check to resolve, not a
+finding on its own. Position bias cannot arise here by construction: the rubric scores one draft
+at a time rather than ranking a pair. Self-preference remains untested until a judge from a
+different model family scores the same drafts, which is one flag away
+(`GEMINI_JUDGE_MODEL`).
 
 **What is already known about label quality:** the human golden labels agree with the LLM's own
 labels on 83% of intents (κ 0.80) and 91% of escalate decisions (κ 0.79) — so roughly a sixth of

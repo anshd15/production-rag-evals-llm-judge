@@ -1,7 +1,7 @@
 """How much should we trust the LLM judge? Compare it with a human on the same drafts.
 
   python -m src.judge_agreement make  --run <run>   # sample drafts to rate -> data/processed/rating_set.jsonl
-  (rate them in the labelling tool, tab 2)
+  (rate them in the labelling tool, tab 2, or the offline pack in labelling/)
   python -m src.judge_agreement score --run <run>   # -> reports/judge_agreement.md
 
 Drafts are a mix of agent and baseline replies so the human sees both good and bad
@@ -20,6 +20,22 @@ from src.make_eval_sets import GOLDEN_FILE, read_jsonl
 from src.metrics import kappa
 
 MIX = {"agent": 30, "simple": 20, "trivial": 10}
+# Below this, kappa swings wildly with a single rating. Publishing one anyway is how
+# an evaluation harness starts producing evidence-shaped noise: the first version of
+# this file reported kappa = 0.00 computed on two ratings.
+MIN_RATINGS_FOR_KAPPA = 30
+
+NOT_ESTABLISHED = """# Judge vs human agreement — not established
+
+{rated} of {total} drafts rated; a Cohen's kappa needs at least {minimum} to be worth printing.
+
+Until those ratings exist, every reply-quality number in the report rests on a model grading a
+model, and should be read that way. The routing metrics are unaffected — those are scored against
+human labels.
+
+Rate the remaining drafts with `python -m src.label_app` (tab 2), or the offline pack:
+`python -m src.export_ratings export` then `import labelling/ratings.json`.
+"""
 
 
 def make(run: str):
@@ -48,6 +64,13 @@ def score(run: str):
     if not rated:
         print("No human ratings yet.")
         return
+    if len(rated) < MIN_RATINGS_FOR_KAPPA:
+        msg = NOT_ESTABLISHED.format(rated=len(rated), total=len(items),
+                                     minimum=MIN_RATINGS_FOR_KAPPA)
+        (ROOT / "reports" / "judge_agreement.md").write_text(msg, encoding="utf-8")
+        print(msg)
+        return
+
     examples = {e["msg_id"]: e for e in read_jsonl(GOLDEN_FILE)}
     verdicts = judge([examples[it["msg_id"]] for it in rated], [it["draft"] for it in rated])
     pairs = [(human[it["item_id"]], v, it) for it, v in zip(rated, verdicts) if v]

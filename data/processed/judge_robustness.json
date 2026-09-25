@@ -1,0 +1,31 @@
+{
+ "n": 200,
+ "systems": {
+  "agent": {
+   "judged": 200,
+   "would_send": 0.73
+  },
+  "simple": {
+   "judged": 200,
+   "would_send": 0.445
+  },
+  "trivial": {
+   "judged": 200,
+   "would_send": 0.11
+  }
+ },
+ "verbosity": {
+  "agent": {
+   "median_chars": 80.5,
+   "would_send_short": 0.69,
+   "would_send_long": 0.77,
+   "gap_pp": 8.0
+  },
+  "simple": {
+   "median_chars": 107.0,
+   "would_send_short": 0.43137254901960786,
+   "would_send_long": 0.45918367346938777,
+   "gap_pp": 2.8
+  }
+ }
+}
