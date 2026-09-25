@@ -49,6 +49,7 @@ python -m src.smoke --n 20 --concurrency 4   # contract + latency check, non-zer
 | Endpoint | Purpose |
 |---|---|
 | `POST /triage` | intent, routing decision + reason, drafted reply, request id, latency |
+| `GET /review` | the review console: queued drafts, why each routed that way, the past cases behind it, accept / edit / reject |
 | `POST /feedback` | what the human did with the draft: accepted / edited / rejected |
 | `GET /feedback/report` | live accept rate and the intents whose drafts get edited most |
 | `GET /metrics` | automation rate, escalation rate, guardrail fires, average latency |

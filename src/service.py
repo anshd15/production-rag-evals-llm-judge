@@ -15,13 +15,15 @@ receive a wrong answer.
 """
 import time
 import uuid
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
 from src import agent
-from src.feedback import ACTIONS, record_decision, record_outcome
+from src.feedback import (ACTIONS, pending_review, record_decision, record_outcome,
+                          report)
 from src.observability import METRICS, log_event, render_prometheus
 
 app = FastAPI(title="Production RAG with Evals and LLM as a Judge", version="0.3.0")
@@ -76,8 +78,14 @@ def triage(req: TriageRequest):
     request_id, t0 = str(uuid.uuid4())[:8], time.perf_counter()
     example = {"msg_id": request_id, "text": req.text,
                "context": [t.model_dump() for t in req.context], "brand_reply": ""}
+    retrieved_cases: list[dict] = []
     try:
-        pred = agent.run([example], get_retriever())[0]
+        retriever = get_retriever()
+        pred = agent.run([example], retriever)[0]
+        if pred and pred.get("retrieved"):
+            rows = retriever.rows.set_index("msg_id")
+            retrieved_cases = [{"text": rows.text[m], "brand_reply": rows.brand_reply[m]}
+                               for m in pred["retrieved"] if m in rows.index]
     except Exception as exc:
         METRICS["errors"] += 1
         log_event("triage_failed", request_id=request_id, error=type(exc).__name__)
@@ -93,7 +101,7 @@ def triage(req: TriageRequest):
     if pred.get("guardrail"):
         METRICS[f"guardrail_{pred['guardrail']}"] += 1
     METRICS["latency_ms_total"] += latency_ms
-    record_decision(request_id, pred)
+    record_decision(request_id, pred, example, retrieved_cases)
     log_event("triage", request_id=request_id, intent=pred["intent"],
               escalate=pred["escalate"], guardrail=pred.get("guardrail"), ms=latency_ms)
     return pred | {"request_id": request_id, "latency_ms": latency_ms}
@@ -114,5 +122,16 @@ def feedback(outcome: Outcome):
 
 @app.get("/feedback/report")
 def feedback_report():
-    from src.feedback import report
     return report()
+
+
+@app.get("/review", response_class=FileResponse)
+def review_console():
+    """A queue a human can actually work: the draft, why it routed that way, the past
+    cases it was built from, and accept / edit / reject in one keypress."""
+    return FileResponse(Path(__file__).with_name("review_app.html"))
+
+
+@app.get("/review/state")
+def review_state():
+    return {"queue": pending_review(), "report": report()}

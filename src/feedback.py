@@ -29,10 +29,20 @@ def _append(path, rec):
         f.write(json.dumps(rec, ensure_ascii=False) + "\n")
 
 
-def record_decision(request_id: str, prediction: dict):
+def record_decision(request_id: str, prediction: dict, example: dict | None = None,
+                    evidence: list[dict] | None = None):
+    """Store enough for a human to review the decision later without re-running anything."""
     _append(DECISIONS, {"request_id": request_id, "intent": prediction["intent"],
-                        "escalate": prediction["escalate"], "reply": prediction["reply"],
-                        "guardrail": prediction.get("guardrail")})
+                        "escalate": prediction["escalate"],
+                        "escalation_reason": prediction.get("escalation_reason"),
+                        "confidence": prediction.get("confidence"),
+                        "reason": prediction.get("reason", ""),
+                        "reply": prediction["reply"],
+                        "guardrail": prediction.get("guardrail"),
+                        "pii_detected": prediction.get("pii_detected"),
+                        "text": (example or {}).get("text", ""),
+                        "context": (example or {}).get("context", []),
+                        "evidence": evidence or []})
 
 
 def record_outcome(request_id: str, action: str, final_reply: str = "", note: str = ""):
@@ -44,6 +54,17 @@ def record_outcome(request_id: str, action: str, final_reply: str = "", note: st
 
 def _read(path):
     return [json.loads(l) for l in open(path, encoding="utf-8")] if path.exists() else []
+
+
+def pending_review() -> list[dict]:
+    """Decisions a human has not acted on yet.
+
+    Escalations sort first because somebody is waiting on them; auto-handled drafts
+    stay in the queue too, so quality is sampled rather than assumed.
+    """
+    reviewed = {o["request_id"] for o in _read(OUTCOMES)}
+    waiting = [d for d in _read(DECISIONS) if d["request_id"] not in reviewed]
+    return sorted(waiting, key=lambda d: (not d["escalate"], d["ts"]))
 
 
 def report() -> dict:
