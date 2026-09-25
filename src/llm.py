@@ -113,26 +113,46 @@ _last_call = [0.0]
 
 
 def _gemini_call(model: str, system: str, user: str) -> str:
+    """One model call: rate-paced, deadline-bound, retried with jitter, breaker-guarded."""
     global _client
+    import random
+
     from google import genai
     from google.genai import types
+
+    from src.resilience import breaker, record_usage
+    from src.settings import settings
+
     if _client is None:
         _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    min_gap = 60.0 / float(os.getenv("GEMINI_RPM", "10"))
-    config = types.GenerateContentConfig(system_instruction=system, temperature=0,
-                                         response_mime_type="application/json")
-    for attempt in range(6):
+    min_gap = 60.0 / settings.gemini_rpm
+    config = types.GenerateContentConfig(
+        system_instruction=system, temperature=0, response_mime_type="application/json",
+        http_options=types.HttpOptions(timeout=settings.llm_timeout_s * 1000))
+    last_error = None
+    for attempt in range(settings.llm_max_attempts):
+        breaker.before_call()  # fail fast while the provider is known to be down
         wait = _last_call[0] + min_gap - time.time()
         if wait > 0:
             time.sleep(wait)
         _last_call[0] = time.time()
         try:
-            return _client.models.generate_content(model=model, contents=user, config=config).text
-        except Exception as e:  # rate limits / transient server errors
-            if attempt == 5:
+            resp = _client.models.generate_content(model=model, contents=user, config=config)
+            record_usage(getattr(resp, "usage_metadata", None))
+            breaker.record_success()
+            return resp.text
+        except Exception as e:  # rate limits / timeouts / transient server errors
+            last_error = e
+            breaker.record_failure(f"{e.__class__.__name__}: {e}")
+            if attempt == settings.llm_max_attempts - 1:
                 raise
-            print(f"  gemini error ({e.__class__.__name__}: {str(e)[:120]}), retrying", file=sys.stderr)
-            time.sleep(min(60, 5 * 2 ** attempt))
+            # Jitter matters: without it, every worker retries in lockstep and
+            # re-creates the spike that caused the failure.
+            backoff = min(60, 5 * 2 ** attempt) * (0.5 + random.random())
+            print(f"  gemini error ({e.__class__.__name__}: {str(e)[:120]}), "
+                  f"retry in {backoff:.1f}s", file=sys.stderr)
+            time.sleep(backoff)
+    raise last_error
 
 
 # ---------------------------------------------------------------- stand-in queue

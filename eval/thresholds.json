@@ -1,0 +1,19 @@
+{
+ "run": "final",
+ "split": "golden",
+ "slack": 0.05,
+ "measured": {
+  "intent_accuracy": 0.715,
+  "escalation_recall": 0.8636363636363636,
+  "would_send": 0.73,
+  "good_automation_rate": 0.395,
+  "unsafe_auto_rate": 0.045
+ },
+ "bounds": {
+  "intent_accuracy": 0.665,
+  "escalation_recall": 0.8136,
+  "would_send": 0.68,
+  "good_automation_rate": 0.345,
+  "unsafe_auto_rate": 0.095
+ }
+}

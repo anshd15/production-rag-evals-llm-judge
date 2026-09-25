@@ -3,8 +3,13 @@ services:
     build: .
     ports: ["8000:8000"]
     environment:
-      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      # With no key the container stays offline and answers from the committed
+      # cache; set GEMINI_API_KEY and LLM_OFFLINE=0 to call a live model.
+      LLM_OFFLINE: ${LLM_OFFLINE:-1}
+      LLM_PROVIDER: ${LLM_PROVIDER:-standin}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_RPM: ${GEMINI_RPM:-10}
+      API_KEY: ${API_KEY:-}
+      RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-60}
     volumes:
       - ./data/feedback:/app/data/feedback

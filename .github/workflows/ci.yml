@@ -23,3 +23,5 @@ jobs:
         run: python -m src.redteam
       - name: Evaluation set matches its manifest
         run: python -m src.dataset verify
+      - name: Quality gate on the committed run
+        run: python -m src.gate

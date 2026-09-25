@@ -1,9 +1,12 @@
 FROM python:3.12-slim AS base
-ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 LLM_OFFLINE=1
+ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+# Offline by default: the image ships the response cache, so it serves
+# reproducible answers with no key. Override to call a live provider.
+ENV LLM_OFFLINE=1 LLM_PROVIDER=standin
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt fastapi==0.120.4 "uvicorn[standard]==0.41.1"
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src/ src/
 COPY data/processed/ data/processed/

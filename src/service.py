@@ -17,7 +17,7 @@ import time
 import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 from pydantic import BaseModel, Field
 
@@ -25,9 +25,35 @@ from src import agent
 from src.feedback import (ACTIONS, pending_review, record_decision, record_outcome,
                           report)
 from src.observability import METRICS, log_event, render_prometheus
+from src.resilience import CircuitOpen, breaker
+from src.settings import settings
 
 app = FastAPI(title="Production RAG with Evals and LLM as a Judge", version="0.3.0")
 _retriever = None
+_hits: dict[str, list[float]] = {}
+
+
+def require_key(x_api_key: str = Header(default="")):
+    """Off by default so the repo runs out of the box; set API_KEY to require it."""
+    if settings.api_key and x_api_key != settings.api_key:
+        METRICS["auth_rejected"] += 1
+        raise HTTPException(status_code=401, detail="invalid or missing X-API-Key")
+
+
+def rate_limit(request: Request):
+    """Per-client sliding window. In-process on purpose: one instance, one limiter;
+    a multi-instance deployment needs a shared store, and pretending otherwise
+    would be worse than saying so."""
+    if not settings.rate_limit_per_min:
+        return
+    who = request.client.host if request.client else "unknown"
+    now = time.time()
+    recent = [t for t in _hits.get(who, []) if now - t < 60]
+    if len(recent) >= settings.rate_limit_per_min:
+        METRICS["rate_limited"] += 1
+        raise HTTPException(status_code=429, detail="rate limit exceeded, retry in a minute")
+    recent.append(now)
+    _hits[who] = recent
 
 
 class Outcome(BaseModel):
@@ -65,7 +91,8 @@ def healthz():
 @app.get("/readyz")
 def readyz():
     return {"status": "ready" if _retriever is not None else "cold",
-            "index_rows": len(_retriever.rows) if _retriever else 0}
+            "index_rows": len(_retriever.rows) if _retriever else 0,
+            "breaker": breaker.state, "config": settings.summary()}
 
 
 @app.get("/metrics", response_class=PlainTextResponse)
@@ -73,7 +100,7 @@ def metrics():
     return render_prometheus()
 
 
-@app.post("/triage")
+@app.post("/triage", dependencies=[Depends(require_key), Depends(rate_limit)])
 def triage(req: TriageRequest):
     request_id, t0 = str(uuid.uuid4())[:8], time.perf_counter()
     example = {"msg_id": request_id, "text": req.text,
@@ -86,6 +113,12 @@ def triage(req: TriageRequest):
             rows = retriever.rows.set_index("msg_id")
             retrieved_cases = [{"text": rows.text[m], "brand_reply": rows.brand_reply[m]}
                                for m in pred["retrieved"] if m in rows.index]
+    except CircuitOpen as exc:
+        # The provider is known to be failing: say so immediately instead of
+        # holding the worker for a timeout that will fail anyway.
+        log_event("triage_shed", request_id=request_id, breaker=breaker.state)
+        raise HTTPException(status_code=503, headers={"Retry-After": str(settings.breaker_cooldown_s)},
+                            detail={"request_id": request_id, "error": str(exc)})
     except Exception as exc:
         METRICS["errors"] += 1
         log_event("triage_failed", request_id=request_id, error=type(exc).__name__)
