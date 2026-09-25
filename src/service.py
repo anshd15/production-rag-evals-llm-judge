@@ -24,7 +24,7 @@ from src import agent
 from src.feedback import ACTIONS, record_decision, record_outcome
 from src.observability import METRICS, log_event, render_prometheus
 
-app = FastAPI(title="Handoff", version="0.2.0")
+app = FastAPI(title="Production RAG with Evals and LLM as a Judge", version="0.3.0")
 _retriever = None
 
 

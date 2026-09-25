@@ -1,15 +1,28 @@
-# Handoff — a support agent that knows when to step aside
+# Production RAG with Evals and LLM as a Judge
 
-A retrieval-augmented support agent for **SpotifyCares**, built from the Kaggle *Customer Support on Twitter*
-dataset. For every incoming customer tweet it:
+A retrieval-augmented customer-support agent that knows when **not** to answer — and the
+evaluation harness that proves it. Built on the Kaggle *Customer Support on Twitter* dataset
+(SpotifyCares subset, ~40k real conversations). For every incoming customer message it:
 
 1. **classifies the intent** into one of 11 intents derived from the data,
 2. **drafts a reply grounded in how SpotifyCares actually resolved similar tweets** (retrieval
    over ~34k historical replies), and
 3. **decides auto-handle vs. escalate**, with one of 6 named reasons.
 
-Most of the work is in the **evaluation**: a hand-labelled golden set, two baselines, an
-LLM-as-judge rubric checked against a human, bootstrap confidence intervals, and leakage checks.
+Most of the work is in the **evaluation**: a 200-message hand-labelled golden set, two baselines,
+an LLM-as-judge rubric checked against human ratings, bootstrap confidence intervals, and leakage
+checks that run in CI.
+
+| | Agent | TF-IDF baseline | Canned reply |
+|---|---|---|---|
+| Intent accuracy | **71.5%** [65–78] | 51.5% | 23.0% |
+| Escalations caught | **86.4%** [78–94] | 57.6% | 0% |
+| Replies a reviewer would send | **73.0%** [67–79] | 44.5% | 11.0% |
+| Auto-handled | 62.0% | 75.0% | 100% |
+| **Auto-sent when a human was needed** | **4.5%** | 14.0% | 33.0% |
+
+Measured on 200 messages labelled by hand, against a model stand-in (see *LLM providers*).
+Every number is reproducible offline from the committed cache: `python -m src.evaluate --split golden --run final`.
 
 > 📄 Report: [`reports/REPORT.md`](reports/REPORT.md) · Decision log: [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md)
 
@@ -17,16 +30,12 @@ LLM-as-judge rubric checked against a human, bootstrap confidence intervals, and
 
 | | |
 |---|---|
-| Pipeline, baselines, evaluation harness, 4 improvement iterations | done |
-| Golden-set predictions + judge verdicts for all 3 systems | done (committed) |
-| **Hand-labelling the 200 golden messages** | **pending** — `python -m src.label_app`, tab 1 |
-| **Rating 60 replies for judge agreement** | **pending** — same tool, tab 2 |
-| Final numbers, judge κ, label-noise check | one command after the above: `python -m src.finish` |
-
-Reply-quality results (golden, n=200) are already measurable without labels: the agent's drafts
-are approved by the judge **73.0%** of the time vs **44.5%** for a TF-IDF nearest-neighbour reply
-and **11.0%** for the most common canned reply (+28.5pp over the simple baseline, 95% CI
-[+21.0, +36.5]).
+| Pipeline, baselines, evaluation harness, 4 measured iterations | done |
+| 200-message golden set, hand-labelled | done |
+| Guardrails: injection screening, PII redaction, unverifiable-claim blocking | done |
+| Service, container, feedback capture, deploy gate | done |
+| **Judge-vs-human agreement (60 blinded ratings)** | **2/60 rated** — κ not reportable yet |
+| Final numbers on a live model | pending a `GEMINI_API_KEY`; today's numbers use a stand-in |
 
 ## Run it as a service
 
@@ -104,16 +113,22 @@ customer tweet (+ up to 4 previous turns)
    ├─► one LLM call: taxonomy + escalation policy + reply rules + 5 cases
    │   → {intent, confidence, escalate, escalation_reason, reason, reply}
    │
-   └─► guardrails: invalid output → escalate · legal/self-harm keywords → escalate
-                   · reply ≤ 280 chars
+   └─► output guardrails: invalid JSON → escalate · legal/self-harm keywords → escalate
+                          · unverifiable claims ("we've replied to your DM") → escalate
+                          · reply ≤ 280 chars
 ```
+
+Input is screened before it reaches the model: instruction-override attempts are routed straight
+to a human, and PII (Luhn-checked card numbers, emails, phone numbers) is redacted.
 
 ## Repo layout
 
 ```
-src/            pipeline (data_prep, taxonomy, prompts, llm, retrieval, agent, baselines,
+src/            offline pipeline (data_prep, taxonomy, prompts, llm, retrieval, agent, baselines,
                 evaluate, metrics, analyze, judge_agreement, label_app, check_results)
+                serving (service, observability, feedback, input_guards, smoke)
 tests/          unit tests (pytest), run in CI
+labelling/      offline labelling + rating packs (questions, guidelines, importers)
 data/processed/ brand subsample, frozen eval sets, labels (committed)
 llm_cache/      every LLM response (committed; makes results reproducible)
 runs/           predictions, judgements, metrics and failure analyses per run

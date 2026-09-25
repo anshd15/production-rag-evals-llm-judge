@@ -19,11 +19,11 @@ def log_event(event: str, **fields):
 
 
 def render_prometheus() -> str:
-    lines = [f"handoff_uptime_seconds {round(time.time() - BOOT, 1)}"]
+    lines = [f"rag_uptime_seconds {round(time.time() - BOOT, 1)}"]
     for key, value in sorted(METRICS.items()):
-        lines.append(f"handoff_{key} {value}")
+        lines.append(f"rag_{key} {value}")
     served = METRICS["requests"]
     if served:
-        lines.append(f"handoff_latency_ms_avg {METRICS['latency_ms_total'] / served:.1f}")
-        lines.append(f"handoff_automation_rate {METRICS['auto_handled'] / served:.3f}")
+        lines.append(f"rag_latency_ms_avg {METRICS['latency_ms_total'] / served:.1f}")
+        lines.append(f"rag_automation_rate {METRICS['auto_handled'] / served:.3f}")
     return "\n".join(lines) + "\n"

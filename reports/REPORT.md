@@ -1,8 +1,8 @@
-# SpotifyCares support agent — report
+# Production RAG with evals and an LLM judge — report
 
-*(Numbers marked TBD are filled from `runs/final/golden/summary.md` once the golden set is
-hand-labelled; every number in this report is reproducible with
-`python -m src.evaluate --split golden --run final` and `LLM_OFFLINE=1`.)*
+*Case study: a support agent for SpotifyCares, built from the Kaggle Customer Support on Twitter
+dataset. Every number here is reproducible offline with `python -m src.evaluate --split golden
+--run final` under `LLM_OFFLINE=1`; the golden set is 200 messages labelled by hand.*
 
 ## 1. Problem framing: what "good" means for SpotifyCares
 
@@ -73,20 +73,25 @@ verdicts are only trusted as far as they match a human — see §6.
 
 ### Golden set (n=200, human labels) — `runs/final/golden/summary.md`
 
-Reply quality is scored; intent and routing metrics fill in once the golden set is hand-labelled
-(the agent's predictions and the judge's verdicts for all three systems are already committed, so
-the labels are the only missing input).
+| System | Intent acc | Esc. recall | Esc. precision | Automation | Unsafe auto | Would-send | Good automation |
+|---|---|---|---|---|---|---|---|
+| **agent** | **71.5%** [65–78] | **86.4%** [78–94] | 75.0% | 62.0% | **4.5%** | **73.0%** [67–79] | 39.5% [33–46] |
+| simple (TF-IDF + NN reply) | 51.5% [45–58] | 57.6% [45–70] | 76.0% | 75.0% | 14.0% | 44.5% [38–51] | 25.0% [19–31] |
+| trivial (majority + canned reply) | 23.0% [18–29] | 0.0% | — | 100% | 33.0% | 11.0% [7–16] | 10.5% [6–16] |
 
-| System | Would-send (all) | Would-send (auto-sent) | Intent acc | Esc. recall | Good automation | Bad auto-send |
-|---|---|---|---|---|---|---|
-| **agent** | **73.0%** [67–79] | 68.5% | TBD | TBD | TBD | TBD |
-| simple (TF-IDF + NN reply) | 44.5% [38–51] | 40.7% | TBD | TBD | TBD | TBD |
-| trivial (majority + canned reply) | 11.0% [7–16] | 11.0% | TBD | TBD | TBD | TBD |
+The two baselines are the two ways to be wrong. The trivial system automates everything and
+auto-replies into a human-needed case a third of the time; the simple one misses 42% of the
+escalations and its copied replies are approved less than half as often. The agent auto-handles
+62% of traffic while auto-sending into a human-needed case 4.5% of the time.
 
-The agent's replies are approved about **1.6×** as often as copying the nearest historical reply
-(+28.5pp, 95% CI [+21.0, +36.5], P(not better) = 0.000) and about **6.6×** as often as the single
-most common SpotifyCares reply. Rubric pass rates for the agent: `safe` 100%, `tone` 98%,
-`grounded` 90%, `addresses_issue` 84%, `correct_next_step` 75%.
+Paired bootstrap, agent minus the simple baseline: intent accuracy **+20.0pp** [+12.0, +28.0],
+would-send **+28.5pp** [+21.0, +36.5]; P(agent not better) = 0.000 for both.
+
+Per-class recall is uneven: `how_to_usage` collapses to 21% (see failure mode 3) while
+`content_availability` reaches 100% precision. Full table in `runs/final/golden/summary.md`.
+
+Rubric pass rates for the agent: `safe` 100%, `tone` 98%, `grounded` 90%, `addresses_issue` 84%,
+`correct_next_step` 75% — the last is the weakest link and the target of failure mode 4.
 
 ### Dev set (n=250, silver labels) — the same comparison with routing metrics
 
@@ -181,8 +186,9 @@ is **not** yet covered.
   *same* taxonomy text, so they share blind spots (nothing about outages, so both sides get
   outage tweets consistently wrong and no metric notices). Only the golden set is human-labelled,
   and it is the only number that should be quoted.
-- **The judge is a model from the same family as the agent.** §7 reports Cohen's κ against my own
-  ratings on 60 drafts; below κ ≈ 0.6 the reply numbers should be read as "roughly", not as a score.
+- **The judge is unvalidated and shares a model family with the agent.** Only 2 of 60 human
+  ratings exist, so `would-send 73%` currently rests on a model grading a model — the single
+  weakest claim in this report.
 - **The single biggest lever was a definition, not a model.** Re-labelling with a sharper
   escalation rule moved escalation precision 64% → 78% **with the predictions unchanged**. Any
   "automation rate" quoted for a support bot is a statement about where someone drew the
@@ -202,8 +208,19 @@ is **not** yet covered.
 
 ## 7. Judge quality (does the LLM judge agree with a human?)
 
-TBD — 60 drafts (agent + both baselines, system hidden) rated by hand in the labelling tool;
-per-criterion agreement and Cohen's κ in `reports/judge_agreement.md`.
+**Not yet established — 2 of 60 drafts rated.** Cohen's κ on n=2 is meaningless, so nothing is
+reported rather than publishing a number that looks like evidence. Until those ratings land, every
+reply-quality figure in §3 should be read as "an LLM's opinion of an LLM", and the honest headline
+is the routing metrics, which are scored against human labels.
+
+The set-up is in place: 60 drafts sampled across the agent and both baselines, the system that
+wrote each one withheld from the rater, and `src/judge_agreement.py` computing per-criterion
+agreement and κ once ratings exist.
+
+**What is already known about label quality:** the human golden labels agree with the LLM's own
+labels on 83% of intents (κ 0.80) and 91% of escalate decisions (κ 0.79) — so roughly a sixth of
+this task is genuinely contested, which is why the agent's 71.5% should not be read against a
+ceiling of 100%.
 
 ## 8. With one more week
 

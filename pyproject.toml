@@ -1,5 +1,5 @@
 [project]
-name = "handoff"
+name = "production-rag-evals-llm-judge"
 version = "0.2.0"
 description = "Retrieval-augmented customer-support agent that routes what it cannot safely answer, with the evaluation harness that proves it."
 requires-python = ">=3.12"
