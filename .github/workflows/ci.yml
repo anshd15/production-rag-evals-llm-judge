@@ -19,3 +19,5 @@ jobs:
       - run: python -m pytest -q
       - name: Committed results are internally consistent
         run: python -m src.check_results
+      - name: Guardrails hold against the adversarial corpus
+        run: python -m src.redteam

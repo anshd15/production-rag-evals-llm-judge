@@ -6,8 +6,9 @@ from src.taxonomy import ESCALATION_CODES, INTENT_KEYS
 MAX_LEN = 280  # the channel's limit; a truncated apology is worse than a short one
 
 # Hard triggers the model is not trusted to catch on its own.
-RISK_RE = re.compile(r"\b(lawyers?|sue|suing|lawsuit|attorney|legal action|trading standards|"
-                     r"ombudsman|kill myself|suicid\w*|self[- ]harm)\b", re.I)
+RISK_RE = re.compile(r"\b(lawyers?|solicitors?|barristers?|sue|suing|lawsuit|attorney|"
+                     r"legal action|legal advice|small claims|trading standards|ombudsman|"
+                     r"regulator|chargeback|kill myself|suicid\w*|self[- ]harm)\b", re.I)
 # Claims about actions the agent cannot perform or verify. Human agents write these
 # ("we've just replied to your DM") because they can see the DM inbox; the agent cannot.
 UNVERIFIABLE_CLAIM_RE = re.compile(

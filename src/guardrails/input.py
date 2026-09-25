@@ -19,7 +19,11 @@ INJECTION_PATTERNS = [
     r"\b(you are|act as|pretend to be|roleplay as)\b[^.!?]{0,30}\b(now|a different|an?)\b[^.!?]{0,20}"
     r"\b(assistant|ai|bot|admin|developer)\b",
     r"\b(system|developer)\s*(prompt|message)\b",
-    r"\b(reveal|show|print|repeat|output)\b[^.!?]{0,25}\b(prompt|instruction|system message)\b",
+    r"\b(reveal|show|print|repeat|output|recite)\b[^.!?]{0,40}"
+    r"\b(prompt|instructions?|system message|rules?)\b",
+    r"\b(new|updated|revised|override)\b\s*(instruction|rule|system prompt|directive)s?\b",
+    r"\byou (?:must|should|will) (?:always|never)\b[^.!?]{0,40}"
+    r"\b(approve|refund|grant|ignore|skip)\b",
     r"\b(issue|approve|grant|give)\b[^.!?]{0,25}\b(refund|credit|premium|free)\b[^.!?]{0,25}"
     r"\b(immediately|without|no)\b",
     r"</?(system|instruction|admin)>",
@@ -28,7 +32,10 @@ INJECTION_RE = re.compile("|".join(INJECTION_PATTERNS), re.I)
 
 CARD_RE = re.compile(r"\b(?:\d[ -]?){13,19}\b")
 EMAIL_RE = re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]{2,}\b")
-PHONE_RE = re.compile(r"(?<!\w)(?:\+\d{1,3}[ -]?)?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}(?!\w)")
+# North American (415) 555-0132 / +1 415 555 0132, and UK-style 020 7946 0958.
+PHONE_RE = re.compile(
+    r"(?<!\w)(?:\+\d{1,3}[ -]?)?(?:\(\d{3}\)|\d{3})[ -]?\d{3}[ -]?\d{4}(?!\w)"
+    r"|(?<!\w)(?:\+44[ -]?)?0\d{2,4}[ -]\d{3,4}[ -]?\d{3,4}(?!\w)")
 PII_PATTERNS = {"card": CARD_RE, "email": EMAIL_RE, "phone": PHONE_RE}
 
 

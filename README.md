@@ -85,6 +85,7 @@ are reproduced exactly without downloading the 500 MB raw dump or calling any mo
 | 6. Evaluate | `python -m src.evaluate --split dev\|golden --run NAME` | `runs/NAME/<split>/` |
 | 7. Failure analysis | `python -m src.analyze --run NAME --split dev` | `runs/NAME/<split>/failures.md` |
 | 8. Judge vs human | `python -m src.judge_agreement make\|score --run NAME` | `reports/judge_agreement.md` |
+| 9. Red-team the guardrails | `python -m src.redteam` | `reports/redteam.md` (runs in CI) |
 
 Raw data: download `twcs.zip` from
 [Kaggle](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) and unzip to
