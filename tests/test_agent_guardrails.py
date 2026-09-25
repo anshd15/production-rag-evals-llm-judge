@@ -1,4 +1,5 @@
-from src.agent import MAX_LEN, guardrails, truncate
+from src.agent import guardrails
+from src.guardrails import MAX_LEN, truncate
 from src.prompts import AGENT_SYSTEM, JUDGE_SYSTEM, LABELER_SYSTEM
 from src.taxonomy import ESCALATION_CODES, INTENT_KEYS
 

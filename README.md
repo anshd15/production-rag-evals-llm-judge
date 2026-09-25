@@ -118,8 +118,9 @@ customer tweet (+ up to 4 previous turns)
                           · reply ≤ 280 chars
 ```
 
-Input is screened before it reaches the model: instruction-override attempts are routed straight
-to a human, and PII (Luhn-checked card numbers, emails, phone numbers) is redacted.
+Input is screened **before the prompt is built** (`src/guardrails/input.py`): an
+instruction-override attempt never reaches the model at all, and PII (Luhn-checked card numbers,
+emails, phone numbers) is redacted, so it cannot enter a prompt, a cache file or a log.
 
 ## Repo layout
 

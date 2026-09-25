@@ -1,4 +1,4 @@
-"""Screen the customer message BEFORE it reaches the model.
+"""Screen the customer message before the prompt is built.
 
 Public support channels are hostile input: people paste card numbers into
 tweets, and anything that reaches a prompt can try to steer it. Two checks:
@@ -6,8 +6,10 @@ tweets, and anything that reaches a prompt can try to steer it. Two checks:
   prompt_injection  text trying to override the agent's instructions
   pii               payment-card or full email/phone data in a public tweet
 
-Neither is fatal on its own — both force the case to a human, and PII is
-redacted before the text is ever sent to a model or written to a log.
+An injection attempt short-circuits the model call entirely — there is nothing
+to answer. PII is redacted in `safe_text`, which is what src/agent.py sends to
+retrieval and to the model, so raw card numbers never enter a prompt or a cache
+file.
 """
 import re
 

@@ -1,4 +1,5 @@
-from src.agent import UNVERIFIABLE_CLAIM_RE, guardrails
+from src.agent import guardrails
+from src.guardrails import UNVERIFIABLE_CLAIM_RE
 
 EX = {"text": "any update on my issue?", "context": []}
 BASE = {"intent": "dm_status_followup", "confidence": 0.9, "escalate": False,
