@@ -21,3 +21,5 @@ jobs:
         run: python -m src.check_results
       - name: Guardrails hold against the adversarial corpus
         run: python -m src.redteam
+      - name: Evaluation set matches its manifest
+        run: python -m src.dataset verify

@@ -1,0 +1,44 @@
+{
+ "name": "spotifycares-support-triage",
+ "version": "1.0",
+ "frozen": "2026-09-25",
+ "source": {
+  "dataset": "Customer Support on Twitter (Thought Vector, Kaggle)",
+  "licence": "CC BY-NC-SA 4.0",
+  "brand": "SpotifyCares",
+  "period": "2017-10-01 to 2017-12-03"
+ },
+ "task": "intent classification (11 classes) + auto-handle vs escalate with a reason (6 codes)",
+ "splits": {
+  "golden": "200 human-labelled, test only",
+  "dev": "250 LLM-labelled (silver), all tuning happens here",
+  "rating": "60 blinded drafts for judge-vs-human agreement"
+ },
+ "files": [
+  {
+   "path": "data/processed/golden_set.jsonl",
+   "rows": 200,
+   "sha256": "72a1fe8f3b670a1bdd26e01c70a2932a980ae988ff2db3e5b6787eeb9199bd3b"
+  },
+  {
+   "path": "data/processed/golden_labels.jsonl",
+   "rows": 200,
+   "sha256": "79a445938044ecac0f42573088ca91f0dad7d0c563b6d4c7c6d475894fe6a1f1"
+  },
+  {
+   "path": "data/processed/dev_set.jsonl",
+   "rows": 250,
+   "sha256": "d1432eff93983e6986b32d99662b90dad7b3a71b5fb1dc2fffc86a34ff7de4d0"
+  },
+  {
+   "path": "data/processed/dev_silver_labels.jsonl",
+   "rows": 250,
+   "sha256": "1fe8fcf09b6e4de3dff023c620be575ee66a4f3439ae87eecc62ffb0049b00ab"
+  },
+  {
+   "path": "data/processed/rating_set.jsonl",
+   "rows": 60,
+   "sha256": "234c28d7688cfce60ec27c2fb464b4a4e2000e515e75ba5ddcd1081e0e4a000b"
+  }
+ ]
+}
