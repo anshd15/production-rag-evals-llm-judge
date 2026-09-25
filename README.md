@@ -86,6 +86,8 @@ are reproduced exactly without downloading the 500 MB raw dump or calling any mo
 | 7. Failure analysis | `python -m src.analyze --run NAME --split dev` | `runs/NAME/<split>/failures.md` |
 | 8. Judge vs human | `python -m src.judge_agreement make\|score --run NAME` | `reports/judge_agreement.md` |
 | 9. Red-team the guardrails | `python -m src.redteam` | `reports/redteam.md` (runs in CI) |
+| 10. Retrieval quality | `python -m src.retrieval_eval` | `reports/retrieval_quality.md` |
+| 11. Judge bias checks | `python -m src.judge_robustness --run final` | `reports/judge_robustness.md` |
 
 Raw data: download `twcs.zip` from
 [Kaggle](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) and unzip to
