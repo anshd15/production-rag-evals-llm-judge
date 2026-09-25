@@ -15,13 +15,21 @@ from src.config import PROCESSED, ROOT
 from src.make_eval_sets import read_jsonl
 from src.taxonomy import ESCALATION_CODES, INTENT_KEYS
 
+CRLF, LF = bytes([13, 10]), bytes([10])
 MANIFEST = ROOT / "data" / "golden" / "v1" / "manifest.json"
 REQUIRED_EXAMPLE_FIELDS = {"msg_id", "thread_id", "customer_id", "created_at", "is_opener",
                            "context", "text", "brand_reply", "stratum"}
 
 
 def sha256(path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    """Hash the content, not the line endings.
+
+    .gitattributes normalises to LF in the repository, so a Windows checkout has
+    CRLF on disk and a Linux one has LF. Hashing raw bytes makes the manifest
+    fail on whichever platform did not create it — which is exactly what
+    happened the first time CI ran this.
+    """
+    return hashlib.sha256(path.read_bytes().replace(CRLF, LF)).hexdigest()
 
 
 def validate_examples(rows: list[dict]) -> list[str]:

@@ -18,27 +18,28 @@
   {
    "path": "data/processed/golden_set.jsonl",
    "rows": 200,
-   "sha256": "72a1fe8f3b670a1bdd26e01c70a2932a980ae988ff2db3e5b6787eeb9199bd3b"
+   "sha256": "b1bfa01e5e9c7c0f7ee48528de0105e612fbfeba5ac7e77953f6376721e74358"
   },
   {
    "path": "data/processed/golden_labels.jsonl",
    "rows": 200,
-   "sha256": "79a445938044ecac0f42573088ca91f0dad7d0c563b6d4c7c6d475894fe6a1f1"
+   "sha256": "795caeca1486989d3c351d4ae8753dd4f98980a480df7c300799450903063aa8"
   },
   {
    "path": "data/processed/dev_set.jsonl",
    "rows": 250,
-   "sha256": "d1432eff93983e6986b32d99662b90dad7b3a71b5fb1dc2fffc86a34ff7de4d0"
+   "sha256": "f63aa6aeb5bb2f629547d0ee0604280b81b87aee529124643055875d6122fd2a"
   },
   {
    "path": "data/processed/dev_silver_labels.jsonl",
    "rows": 250,
-   "sha256": "1fe8fcf09b6e4de3dff023c620be575ee66a4f3439ae87eecc62ffb0049b00ab"
+   "sha256": "17916842133e68ece6bb3fbbf4ddb34edb38b1c03c09ede29b12f43ad719ce29"
   },
   {
    "path": "data/processed/rating_set.jsonl",
    "rows": 60,
-   "sha256": "234c28d7688cfce60ec27c2fb464b4a4e2000e515e75ba5ddcd1081e0e4a000b"
+   "sha256": "507cad78ee94f146f6259b4a7bc0980f4e1ac5da327af188b7d2ebcc7d7a8602"
   }
- ]
+ ],
+ "hashing": "sha256 of file content with CRLF normalised to LF"
 }
