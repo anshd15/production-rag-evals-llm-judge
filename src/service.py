@@ -77,10 +77,17 @@ def get_retriever():
     global _retriever
     if _retriever is None:
         t0 = time.perf_counter()
-        _retriever = agent.Retriever()
-        log_event("index_loaded", rows=len(_retriever.rows),
-                  ms=round((time.perf_counter() - t0) * 1000))
+        _retriever = agent.get_retriever()
+        log_event("index_loaded", backend=settings.retrieval_backend,
+                  rows=len(_retriever.rows), ms=round((time.perf_counter() - t0) * 1000))
     return _retriever
+
+
+@app.get("/", response_class=FileResponse)
+def demo():
+    """The public face: send a tweet, see the decision and the precedent behind it,
+    and a panel of attacks that make the guardrails fire in front of you."""
+    return FileResponse(Path(__file__).with_name("demo_app.html"))
 
 
 @app.get("/healthz")
@@ -137,7 +144,11 @@ def triage(req: TriageRequest):
     record_decision(request_id, pred, example, retrieved_cases)
     log_event("triage", request_id=request_id, intent=pred["intent"],
               escalate=pred["escalate"], guardrail=pred.get("guardrail"), ms=latency_ms)
-    return pred | {"request_id": request_id, "latency_ms": latency_ms}
+    # The retrieved cases ride along so a caller can see the evidence behind the
+    # draft, not just the draft. A reply with no visible provenance can only be
+    # judged on how it reads, which is how plausible-and-wrong replies get sent.
+    return pred | {"request_id": request_id, "latency_ms": latency_ms,
+                   "retrieved_cases": retrieved_cases}
 
 
 @app.post("/feedback")
