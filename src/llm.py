@@ -110,6 +110,31 @@ def complete_batch(role: str, requests: list[dict]) -> list[str | None]:
 # ---------------------------------------------------------------- gemini
 _client = None
 _last_call = [0.0]
+_spent = [0]
+
+
+class BudgetExhausted(RuntimeError):
+    """Raised instead of making a paid call once LLM_MAX_CALLS is reached."""
+
+
+def calls_made() -> int:
+    return _spent[0]
+
+
+def _charge_budget():
+    """Count every live call and stop at the cap.
+
+    A full re-run is thousands of calls, so a loop that retries forever is
+    indistinguishable from normal traffic at the provider. The cap turns a
+    runaway into a crash with a number attached instead of a bill.
+    """
+    from src.settings import settings
+    limit = settings.llm_max_calls
+    if limit and _spent[0] >= limit:
+        raise BudgetExhausted(
+            f"LLM_MAX_CALLS={limit} reached ({_spent[0]} live calls this process). "
+            f"Cached responses are already on disk; re-run to continue, or raise the cap.")
+    _spent[0] += 1
 
 
 def _gemini_call(model: str, system: str, user: str) -> str:
@@ -132,6 +157,7 @@ def _gemini_call(model: str, system: str, user: str) -> str:
     last_error = None
     for attempt in range(settings.llm_max_attempts):
         breaker.before_call()  # fail fast while the provider is known to be down
+        _charge_budget()       # a retry costs the same as a first attempt
         wait = _last_call[0] + min_gap - time.time()
         if wait > 0:
             time.sleep(wait)
