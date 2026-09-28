@@ -17,7 +17,8 @@ import numpy as np
 from src import agent
 from src.baselines import Baselines
 from src.config import PROCESSED, ROOT
-from src.llm import complete_batch, model_for, parse_json, provider
+from src.llm import calls_made, complete_batch, model_for, parse_json, provider
+from src.settings import settings
 from src.make_eval_sets import DEV_FILE, GOLDEN_FILE, read_jsonl
 from src.metrics import (bootstrap_ci, confusion, escalation_stats, intent_accuracy,
                          intent_macro_f1, paired_bootstrap_diff)
@@ -203,6 +204,11 @@ def main():
             [judgements["simple"][i]["would_send"] for i in both])
     meta = {"split": args.split, "run": args.run, "n": len(examples), "provider": provider(),
             "agent_model": model_for("agent"), "judge_model": model_for("judge"),
+            # Retrieval decides what goes into every prompt, so a run is only
+            # comparable to another run that used the same backend and mode.
+            "retrieval_backend": settings.retrieval_backend,
+            "retrieval_exact": settings.qdrant_exact if settings.retrieval_backend == "qdrant" else True,
+            "llm_calls_made": calls_made(),
             "label_source": "silver (LLM)" if args.split == "dev" else "human (golden)"}
     (out_dir / "metrics.json").write_text(json.dumps(
         {"meta": meta, "systems": metrics, "comparisons": comparisons}, indent=1), encoding="utf-8")
