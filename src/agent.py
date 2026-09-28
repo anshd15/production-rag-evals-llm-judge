@@ -9,6 +9,7 @@ from src.guardrails.output import unusable
 from src.llm import complete_batch, parse_json
 from src.prompts import AGENT_SYSTEM, agent_user
 from src.retrieval import Retriever
+from src.retrieval_qdrant import get_retriever
 
 TOP_K = 5
 
@@ -49,7 +50,7 @@ def guardrails(pred: dict | None, ex: dict, flags: dict | None = None) -> dict:
 
 def run(examples: list[dict], retriever: Retriever | None = None) -> list[dict | None]:
     """Returns one prediction per example (None while a stand-in LLM answer is pending)."""
-    retriever = retriever or Retriever()
+    retriever = retriever if retriever is not None else get_retriever()
     flags = [screen(ex["text"]) for ex in examples]
     # From here on the agent works on redacted text: retrieval, prompt and cache
     # never see a card number.

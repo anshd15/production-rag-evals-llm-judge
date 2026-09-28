@@ -9,7 +9,29 @@ services:
       LLM_PROVIDER: ${LLM_PROVIDER:-standin}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_RPM: ${GEMINI_RPM:-10}
+      LLM_MAX_CALLS: ${LLM_MAX_CALLS:-0}
       API_KEY: ${API_KEY:-}
       RATE_LIMIT_PER_MIN: ${RATE_LIMIT_PER_MIN:-60}
+      # numpy by default so `docker compose up` needs nothing else running.
+      # Set RETRIEVAL_BACKEND=qdrant to use the service below.
+      RETRIEVAL_BACKEND: ${RETRIEVAL_BACKEND:-numpy}
+      QDRANT_URL: ${QDRANT_URL:-http://qdrant:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_EXACT: ${QDRANT_EXACT:-1}
     volumes:
       - ./data/feedback:/app/data/feedback
+    depends_on:
+      qdrant:
+        condition: service_started
+
+  # Local stand-in for Qdrant Cloud. Production uses the managed free tier
+  # (see deploy/README.md); this exists so the backend can be developed and the
+  # parity check run without a network round trip.
+  qdrant:
+    image: qdrant/qdrant:v1.16.1
+    ports: ["6333:6333"]
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+volumes:
+  qdrant_storage:
