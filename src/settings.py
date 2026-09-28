@@ -39,6 +39,9 @@ class Settings:
     # A hung model call holds a worker forever; this is the deadline per attempt.
     llm_timeout_s: int = field(default_factory=lambda: _int("LLM_TIMEOUT_S", 45, 5, 300))
     llm_max_attempts: int = field(default_factory=lambda: _int("LLM_MAX_ATTEMPTS", 4, 1, 10))
+    # Spend guard. A full re-run of the dev iterations plus golden is ~6k calls;
+    # a bug that loops is the same API from the provider's side. 0 disables.
+    llm_max_calls: int = field(default_factory=lambda: _int("LLM_MAX_CALLS", 0, 0, 1_000_000))
     # Open the circuit after this many consecutive failures; stop trying for this long.
     breaker_threshold: int = field(default_factory=lambda: _int("BREAKER_THRESHOLD", 5, 1, 100))
     breaker_cooldown_s: int = field(default_factory=lambda: _int("BREAKER_COOLDOWN_S", 30, 1, 600))
@@ -51,6 +54,19 @@ class Settings:
         default_factory=lambda: float(_clean("COST_PER_MTOK_IN", "0") or 0))
     cost_per_mtok_out: float = field(
         default_factory=lambda: float(_clean("COST_PER_MTOK_OUT", "0") or 0))
+    # Retrieval. numpy is the default so the repo runs with no extra service.
+    retrieval_backend: str = field(
+        default_factory=lambda: (_clean("RETRIEVAL_BACKEND", "numpy") or "numpy").lower())
+    qdrant_url: str = field(
+        default_factory=lambda: _clean("QDRANT_URL", "http://localhost:6333"))
+    qdrant_api_key: str = field(default_factory=lambda: _clean("QDRANT_API_KEY"))
+    qdrant_collection: str = field(
+        default_factory=lambda: _clean("QDRANT_COLLECTION", "spotifycares_history"))
+    qdrant_timeout_s: int = field(default_factory=lambda: _int("QDRANT_TIMEOUT_S", 20, 1, 120))
+    # Exact search returns the same top-k as the numpy matmul, so the committed
+    # LLM cache stays valid. HNSW may reorder neighbours and voids it.
+    qdrant_exact: bool = field(
+        default_factory=lambda: _clean("QDRANT_EXACT", "1") != "0")
 
     def resolved_provider(self) -> str:
         return self.provider or ("gemini" if self.gemini_key else "standin")
@@ -62,7 +78,10 @@ class Settings:
                 "llm_max_attempts": self.llm_max_attempts,
                 "breaker_threshold": self.breaker_threshold,
                 "rate_limit_per_min": self.rate_limit_per_min,
-                "auth_required": bool(self.api_key)}
+                "auth_required": bool(self.api_key),
+                "llm_max_calls": self.llm_max_calls,
+                "retrieval_backend": self.retrieval_backend,
+                "qdrant_exact": self.qdrant_exact}
 
 
 settings = Settings()
