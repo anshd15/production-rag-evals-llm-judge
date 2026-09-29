@@ -271,18 +271,34 @@ def ingest(role: str | None = None) -> int:
     return n
 
 
+def _as_object(parsed) -> dict | None:
+    """A prediction is one JSON object, or it is not a prediction.
+
+    `response_mime_type="application/json"` permits any JSON value, not just an
+    object, and the models intermittently wrap the object in a single-element
+    array. Unwrap that, because it is a formatting quirk rather than a different
+    answer. Reject every other shape: the caller routes a rejected response to a
+    human, which is the correct outcome, and it used to crash the run instead.
+    """
+    if isinstance(parsed, dict):
+        return parsed
+    if isinstance(parsed, list) and len(parsed) == 1 and isinstance(parsed[0], dict):
+        return parsed[0]
+    return None
+
+
 def parse_json(text: str | None) -> dict | None:
     """Tolerant JSON-object parsing: strips code fences / prose around the object."""
     if not text:
         return None
     t = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
     try:
-        return json.loads(t)
+        return _as_object(json.loads(t))
     except json.JSONDecodeError:
         m = re.search(r"\{.*\}", t, flags=re.S)
         if m:
             try:
-                return json.loads(m.group(0))
+                return _as_object(json.loads(m.group(0)))
             except json.JSONDecodeError:
                 return None
     return None

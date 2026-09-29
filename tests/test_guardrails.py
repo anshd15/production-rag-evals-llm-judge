@@ -87,3 +87,11 @@ def test_injection_never_reaches_the_model():
         out = agent_mod.run([ex], retriever=object())[0]
     fake_llm.assert_not_called()
     assert out["escalate"] and out["guardrail"] == "prompt_injection" and out["reply"] == ""
+
+
+def test_unusable_survives_a_non_dict():
+    """Truthiness was not enough: a non-empty list is truthy and has no .get()."""
+    from src.guardrails.output import unusable
+    for bad in ([{"intent": "billing_payment"}], [1, 2], "text", 7, None, {}):
+        assert unusable(bad) is True, bad
+    assert unusable({"intent": "billing_payment", "escalate": False}) is False

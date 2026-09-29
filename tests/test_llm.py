@@ -52,3 +52,13 @@ def test_offline_mode_refuses_new_calls(sandbox, monkeypatch):
     monkeypatch.setenv("LLM_OFFLINE", "1")
     with pytest.raises(RuntimeError):
         llm.complete_batch("agent", [{"system": "s", "user": "u"}])
+
+
+def test_parse_json_returns_an_object_or_nothing():
+    """A live Vertex run died here: the model answered with a JSON array and
+    `unusable()` called .get() on a list. Valid JSON is not a valid prediction."""
+    # The models intermittently wrap the object in a one-element array.
+    assert llm.parse_json('[{"intent": "billing_payment"}]') == {"intent": "billing_payment"}
+    # Everything else is not a prediction, and must not reach the caller as one.
+    for bad in ('[{"a": 1}, {"b": 2}]', "[1, 2, 3]", '"a string"', "null", "[]", "42"):
+        assert llm.parse_json(bad) is None, bad

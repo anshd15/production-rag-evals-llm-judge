@@ -26,7 +26,8 @@ def truncate(reply: str, limit: int = MAX_LEN) -> str:
 
 
 def unusable(pred: dict | None) -> bool:
-    return (not pred or pred.get("intent") not in INTENT_KEYS
+    # isinstance, not truthiness: a JSON array parses fine and then explodes on .get().
+    return (not isinstance(pred, dict) or pred.get("intent") not in INTENT_KEYS
             or not isinstance(pred.get("escalate"), bool))
 
 
