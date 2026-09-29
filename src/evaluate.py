@@ -143,6 +143,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", choices=["dev", "golden"], default="dev")
     ap.add_argument("--run", default="scratch")
+    ap.add_argument("--no-judge", action="store_true",
+                    help="skip reply judging; routing metrics are scored against labels anyway")
     args = ap.parse_args()
 
     examples = read_jsonl(DEV_FILE if args.split == "dev" else GOLDEN_FILE)
@@ -165,12 +167,19 @@ def main():
     judgements = {}
     for s in SYSTEMS:
         idx = [i for i, p in enumerate(preds[s]) if p is not None and p["reply"]]
-        js = judge([examples[i] for i in idx], [preds[s][i]["reply"] for i in idx])
+        # Routing metrics are scored against human labels and need no judge at all,
+        # so --no-judge yields real intent/escalation numbers without spending a
+        # single judging call. Useful when the agent's predictions are cached but
+        # the provider's daily quota is gone: reply quality waits, routing does not.
+        js = [None] * len(idx) if args.no_judge else \
+            judge([examples[i] for i in idx], [preds[s][i]["reply"] for i in idx])
         judgements[s] = [None] * len(examples)
         for i, j in zip(idx, js):
             judgements[s][i] = j
-    pending_judge = sum(1 for s in SYSTEMS for i, p in enumerate(preds[s])
-                        if p is not None and p["reply"] and judgements[s][i] is None)
+    # Under --no-judge every verdict is deliberately absent, so it is not "pending".
+    pending_judge = 0 if args.no_judge else sum(
+        1 for s in SYSTEMS for i, p in enumerate(preds[s])
+        if p is not None and p["reply"] and judgements[s][i] is None)
     if pending or pending_judge:
         print(f"PENDING: {pending} agent calls, {pending_judge} judge calls queued. "
               "Answer them, run `python -m src.llm ingest`, then re-run this command.")

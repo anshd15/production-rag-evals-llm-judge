@@ -35,9 +35,20 @@ STANDIN_BATCH = 25
 
 MODELS = {
     "gemini": {
-        "agent": os.getenv("GEMINI_AGENT_MODEL", "gemini-2.5-flash"),
-        "judge": os.getenv("GEMINI_JUDGE_MODEL", "gemini-2.5-flash"),
-        "labeler": os.getenv("GEMINI_LABELER_MODEL", "gemini-2.5-flash"),
+        "agent": os.getenv("GEMINI_AGENT_MODEL", "gemini-3.5-flash"),
+        "judge": os.getenv("GEMINI_JUDGE_MODEL", "gemini-3.5-flash"),
+        "labeler": os.getenv("GEMINI_LABELER_MODEL", "gemini-3.5-flash"),
+    },
+    # Same models, reached through Vertex AI on a GCP project instead of an AI
+    # Studio key. Two reasons to prefer it: nothing secret is ever written down
+    # (it authenticates with Application Default Credentials from `gcloud auth
+    # application-default login`), and it bills the project rather than sharing
+    # the AI Studio free tier's 500-requests-per-day-per-model cap, which is what
+    # stalled the first golden run.
+    "vertex": {
+        "agent": os.getenv("VERTEX_AGENT_MODEL", "gemini-2.5-flash"),
+        "judge": os.getenv("VERTEX_JUDGE_MODEL", "gemini-2.5-flash"),
+        "labeler": os.getenv("VERTEX_LABELER_MODEL", "gemini-2.5-flash"),
     },
     "standin": {
         "agent": "claude-haiku-standin",
@@ -98,9 +109,9 @@ def complete_batch(role: str, requests: list[dict]) -> list[str | None]:
         return out
     if os.getenv("LLM_OFFLINE") == "1":
         raise RuntimeError(f"{len(missing)} {role} calls not in cache and LLM_OFFLINE=1")
-    if prov == "gemini":
+    if prov in ("gemini", "vertex"):
         for i in missing:
-            out[i] = _gemini_call(model, requests[i]["system"], requests[i]["user"])
+            out[i] = _gemini_call(model, requests[i]["system"], requests[i]["user"], prov)
             cache.put(keys[i], out[i])
     else:
         _enqueue(role, model, [(keys[i], requests[i]) for i in missing])
@@ -137,8 +148,14 @@ def _charge_budget():
     _spent[0] += 1
 
 
-def _gemini_call(model: str, system: str, user: str) -> str:
-    """One model call: rate-paced, deadline-bound, retried with jitter, breaker-guarded."""
+def _gemini_call(model: str, system: str, user: str, prov: str = "gemini") -> str:
+    """One model call: rate-paced, deadline-bound, retried with jitter, breaker-guarded.
+
+    `prov` picks how the client authenticates, not what it does: "gemini" uses an
+    AI Studio API key, "vertex" uses Application Default Credentials against a GCP
+    project. Everything downstream — pacing, retries, the breaker, the cache — is
+    identical, which is the point of keeping them one code path.
+    """
     global _client
     import random
 
@@ -149,7 +166,15 @@ def _gemini_call(model: str, system: str, user: str) -> str:
     from src.settings import settings
 
     if _client is None:
-        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        if prov == "vertex":
+            if not settings.gcp_project:
+                raise RuntimeError(
+                    "LLM_PROVIDER=vertex needs GCP_PROJECT set, and credentials from "
+                    "`gcloud auth application-default login`")
+            _client = genai.Client(vertexai=True, project=settings.gcp_project,
+                                   location=settings.gcp_location)
+        else:
+            _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     min_gap = 60.0 / settings.gemini_rpm
     config = types.GenerateContentConfig(
         system_instruction=system, temperature=0, response_mime_type="application/json",
