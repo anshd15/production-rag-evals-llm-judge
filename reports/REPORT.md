@@ -116,15 +116,27 @@ reproduces 81.8% and 6.0% exactly, so the gap is the model, not the transport.
 
 ### Dev set (n=250, silver labels) — the same comparison with routing metrics
 
-**These are still stand-in numbers.** The dev set drove the iteration loop and has not been
-re-run on Gemini; given the golden-set gap above, treat the dev figures as indicative of the
-*shape* of the comparison and not as measurements of the shipped model.
-
 | System | Intent acc | Macro-F1 | Esc. recall | Esc. precision | Automation | Unsafe auto | Would-send | Good automation | Bad auto-send |
 |---|---|---|---|---|---|---|---|---|---|
-| **agent (v5)** | **82.0%** [77–87] | 74.8% | 83.8% [74–92] | 73.1% | 68.8% | **4.4%** | 71.6% | 45.6% | 23.2% |
-| simple | 53.6% [47–60] | 30.9% | 51.5% [40–63] | 67.3% | 79.2% | 13.2% | 50.8% | 31.6% | 47.6% |
-| trivial | 35.6% [30–42] | 4.8% | 0.0% | — | 100% | 28.4% | 6.4% | 6.4% | 93.6% |
+| **agent** | **82.0%** [77–86] | 74.9% | 79.4% [69–89] | 79.4% | 72.8% | **5.6%** | 87.2% [83–91] | 58.0% | 14.8% |
+| simple | 53.6% [47–60] | 30.9% | 51.5% [40–63] | 67.3% | 79.2% | 13.2% | 43.2% [37–49] | 26.4% | 52.8% |
+| trivial | 33.6% [28–40] | 4.6% | 0.0% | — | 100% | 27.2% | 8.8% [6–12] | 8.8% | 91.2% |
+
+### The stand-in gap replicates on an independent split
+
+The dev set was re-run on the same live model. It is a different 250 messages, labelled a
+different way (silver, not human), and it reproduces the golden-set gap almost exactly:
+
+| | Golden (n=200) | Dev (n=250) |
+|---|---|---|
+| Escalation recall | −4.6pp | **−4.4pp** |
+| Unsafe auto-send | +1.5pp | **+1.2pp** |
+| Would-send | +8.4pp | +15.6pp |
+
+Two independent samples, 450 messages, same direction and nearly the same magnitude on both
+safety metrics. This is no longer "the stand-in happened to differ on one split" — the stand-in
+systematically reported the system as **safer than it is**, by roughly 4–5pp of escalation recall,
+and systematically understated reply quality. A single split could not have established that.
 
 Read the two baselines as the two ways to be wrong. The trivial system automates everything and
 is unsafe on 28% of messages; the simple system is cheap and fast but misses half the escalations
@@ -134,7 +146,7 @@ missing 4.4% of the cases that needed a human.
 ### What the numbers cost
 
 Paired bootstrap, agent minus simple baseline (dev): intent accuracy **+28.4pp**
-[+20.8, +34.4], would-send **+20.8pp** [+15, +27]. P(agent not better) = 0.000 in both.
+[+21.2, +35.6], would-send **+44.0pp** [+37.6, +50.8]. P(agent not better) = 0.000 in both.
 
 ## 4. What the improvement loop changed
 
@@ -232,8 +244,8 @@ is **not** yet covered.
 - **The numbers are model-specific, and I have now measured how much.** The golden figures come
   from Gemini 3.5 Flash Lite on Vertex. The stand-in used during development reported escalation
   recall 4.6pp higher and unsafe-auto 1.5pp lower than the real model — i.e. the development-time
-  numbers were *safer than the truth*. Any headline here is a statement about one model on one
-  day; the dev-set table has not been re-run at all.
+  numbers were *safer than the truth* — and the dev split reproduces that at −4.4pp and +1.2pp on
+  a different 250 messages. Any headline here is still a statement about one model on one day.
 
 ## 7. Judge quality (does the LLM judge agree with a human?)
 
