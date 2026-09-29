@@ -15,7 +15,7 @@ jobs:
           cache: pip
       # Unit tests don't need torch / sentence-transformers (embeddings are imported lazily),
       # so CI installs the light dependencies only.
-      - run: pip install pandas==3.0.5 numpy==2.5.3 scikit-learn==1.9.1 pyarrow==25.0.1 python-dotenv==1.2.3 pytest==9.1.1
+      - run: pip install pandas==3.0.5 numpy==2.5.3 scikit-learn==1.9.1 pyarrow==25.0.1 python-dotenv==1.2.3 pytest==9.1.1 qdrant-client==1.16.1
       - run: python -m pytest -q
       - name: Committed results are internally consistent
         run: python -m src.check_results

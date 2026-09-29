@@ -26,6 +26,22 @@ from src.retrieval import load_history, query_text
 from src.settings import settings
 
 BATCH = 256
+# Extra candidates fetched so a score tie sitting across the top-k boundary is
+# resolved by the shared tie-break rule rather than by whichever backend answered.
+TIE_MARGIN = 25
+
+
+def is_local(url: str | None = None) -> bool:
+    """Local mode = the client's own embedded store, no server anywhere.
+
+    QDRANT_URL=:memory: or a filesystem path. Local mode is always an exhaustive
+    scan, so it cannot answer "is HNSW close enough" — but it can answer the
+    question that actually gates everything, which is whether this code path
+    ranks identically to the numpy matmul. That makes the parity check runnable
+    in CI with no service and no network.
+    """
+    url = settings.qdrant_url if url is None else url
+    return not url.startswith(("http://", "https://"))
 
 
 def _client():
@@ -35,7 +51,11 @@ def _client():
     except ImportError as exc:  # pragma: no cover - depends on the environment
         raise RuntimeError(
             "RETRIEVAL_BACKEND=qdrant needs `pip install qdrant-client`") from exc
-    kwargs = {"url": settings.qdrant_url}
+    url = settings.qdrant_url
+    if is_local(url):
+        return (QdrantClient(location=":memory:") if url.startswith(":memory:")
+                else QdrantClient(path=url))
+    kwargs = {"url": url}
     if settings.qdrant_api_key:
         kwargs["api_key"] = settings.qdrant_api_key
     return QdrantClient(timeout=settings.qdrant_timeout_s, **kwargs)
@@ -49,15 +69,15 @@ class QdrantRetriever:
     moves to Qdrant, not the corpus metadata.
     """
 
-    def __init__(self, exact: bool | None = None):
+    def __init__(self, exact: bool | None = None, client=None):
         self.exact = settings.qdrant_exact if exact is None else exact
         self.collection = settings.qdrant_collection
-        self.client = _client()
+        self.client = client if client is not None else _client()
         self.rows = load_history()
 
     # ---------------------------------------------------------------- build
     @staticmethod
-    def build(recreate: bool = False) -> int:
+    def build(recreate: bool = False, client=None, quiet: bool = False) -> int:
         """Embed the history once and upsert it. Safe to re-run."""
         from qdrant_client import models
 
@@ -66,7 +86,7 @@ class QdrantRetriever:
         contexts = [json.loads(c) for c in rows.context]
         vecs = embed([query_text(t, c) for t, c in zip(rows.text, contexts)],
                      cache_name="history_index")
-        client = _client()
+        client = client if client is not None else _client()
         name = settings.qdrant_collection
         exists = client.collection_exists(name)
         if recreate and exists:
@@ -83,7 +103,8 @@ class QdrantRetriever:
                 ids=[int(m) for m in rows.msg_id[start:stop]],
                 vectors=[v.tolist() for v in vecs[start:stop]],
                 payloads=[{"created_at": str(c)} for c in rows.created_at[start:stop]]))
-            print(f"  upserted {stop}/{len(rows)}", file=sys.stderr)
+            if not quiet:
+                print(f"  upserted {stop}/{len(rows)}", file=sys.stderr)
         return len(rows)
 
     # ---------------------------------------------------------------- search
@@ -95,9 +116,16 @@ class QdrantRetriever:
         by_id = self.rows.set_index("msg_id")
         results = []
         for vec in q:
+            # Over-fetch, then apply the same total order as the numpy retriever
+            # (score descending, then msg_id ascending). Qdrant breaks score ties
+            # by its own internal order, which is a different answer to the same
+            # question — and a different set of cases in the prompt is a different
+            # prompt hash, so every cached response would miss. The margin covers
+            # a tie straddling the k boundary.
             hits = self.client.query_points(
-                collection_name=self.collection, query=vec.tolist(), limit=k,
+                collection_name=self.collection, query=vec.tolist(), limit=k + TIE_MARGIN,
                 search_params=params, with_payload=False).points
+            hits = sorted(hits, key=lambda h: (-h.score, int(h.id)))[:k]
             cases = []
             for h in hits:
                 mid = int(h.id)

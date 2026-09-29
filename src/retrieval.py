@@ -40,8 +40,16 @@ class Retriever:
         q = embed([query_text(ex["text"], ex.get("context")) for ex in examples])
         sims = q @ self.vecs.T
         results = []
+        ids = self.rows.msg_id.values
         for row in sims:
-            top = np.argsort(-row)[:k]
+            # Ties are common here — the corpus contains near-duplicate tweets, so
+            # several candidates land on the same cosine score. np.argsort defaults
+            # to quicksort, which is NOT stable, so which of the tied cases made the
+            # top-5 was not guaranteed across numpy versions or machines. The prompt
+            # carries those cases and the LLM cache is keyed by a hash of the prompt,
+            # so an unstable tie-break quietly weakens the reproducibility guarantee.
+            # lexsort makes it total: score descending, then msg_id ascending.
+            top = np.lexsort((ids, -row))[:k]
             results.append([{"msg_id": int(self.rows.msg_id[i]), "text": self.rows.text[i],
                              "brand_reply": self.rows.brand_reply[i], "score": round(float(row[i]), 3)}
                             for i in top])
