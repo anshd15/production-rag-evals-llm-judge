@@ -68,7 +68,7 @@ def check(run: str, split: str) -> int:
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run", default="final")
+    ap.add_argument("--run", default="final_vertex")
     ap.add_argument("--split", default="golden")
     ap.add_argument("--write", action="store_true", help="re-baseline from this run")
     args = ap.parse_args()

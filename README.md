@@ -15,14 +15,35 @@ checks that run in CI.
 
 | | Agent | TF-IDF baseline | Canned reply |
 |---|---|---|---|
-| Intent accuracy | **71.5%** [65–78] | 51.5% | 23.0% |
-| Escalations caught | **86.4%** [78–94] | 57.6% | 0% |
-| Replies a reviewer would send | **73.0%** [67–79] | 44.5% | 11.0% |
-| Auto-handled | 62.0% | 75.0% | 100% |
-| **Auto-sent when a human was needed** | **4.5%** | 14.0% | 33.0% |
+| Intent accuracy | **75.5%** [69–81] | 51.5% | 23.0% |
+| Escalations caught | **81.8%** [72–91] | 57.6% | 0% |
+| Replies a reviewer would send † | **81.4%** [76–86] | 44.5% | 7.0% |
+| Auto-handled | 66.0% | 75.0% | 100% |
+| **Auto-sent when a human was needed** | **6.0%** | 14.0% | 33.0% |
 
-Measured on 200 messages labelled by hand, against a model stand-in (see *LLM providers*).
-Every number is reproducible offline from the committed cache: `python -m src.evaluate --split golden --run final`.
+Gemini 3.5 Flash Lite on Vertex AI, scored against 200 messages labelled by hand. Reproducible
+offline from the committed cache: `python -m src.evaluate --split golden --run final_vertex`.
+
+† **The routing rows are scored against human labels. The reply row is not** — it is an
+LLM judge, and judge-vs-human agreement is not yet established (2 of 60 blinded ratings).
+Read 81.4% as provisional. `reports/judge_robustness.md` measures this judge approving the
+agent's own longer drafts +8pp more often, and it is now the same model family as the agent,
+so the bias runs toward flattery.
+
+### The stand-in was not a neutral proxy
+
+Development ran against a stand-in model. Swapping in the real one moved the numbers in
+**both** directions, which is the reason the swap is reported rather than quietly applied:
+
+| | Stand-in | Gemini (Vertex) | |
+|---|---|---|---|
+| Escalations caught | 86.4% | **81.8%** | safety was **overstated** |
+| Auto-sent when a human was needed | 4.5% | **6.0%** | safety was **overstated** |
+| Intent accuracy | 71.5% | **75.5%** | quality was understated |
+| Replies a reviewer would send † | 73.0% | **81.4%** | quality was understated |
+
+The same model run through AI Studio instead of Vertex (`runs/final_gemini`) reproduces
+81.8% escalation recall and 6.0% unsafe-auto exactly, so the gap is the model, not the transport.
 
 > 📄 Report: [`reports/REPORT.md`](reports/REPORT.md) · Decision log: [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md)
 
@@ -35,7 +56,8 @@ Every number is reproducible offline from the committed cache: `python -m src.ev
 | Guardrails: injection screening, PII redaction, unverifiable-claim blocking | done |
 | Service, container, feedback capture, deploy gate | done |
 | **Judge-vs-human agreement (60 blinded ratings)** | **2/60 rated** — κ not reportable yet |
-| Final numbers on a live model | pending a `GEMINI_API_KEY`; today's numbers use a stand-in |
+| Final numbers on a live model | done — Gemini 3.5 Flash Lite on Vertex AI (`runs/final_vertex`) |
+| Cloud Run demo endpoint | not deployed |
 
 ## Run it as a service
 
