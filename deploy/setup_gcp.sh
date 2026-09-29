@@ -47,7 +47,9 @@ grep -v '^GCP_PROJECT=' .env > .env.tmp 2>/dev/null || true
 mv .env.tmp .env
 {
   echo "GCP_PROJECT=$PROJECT_ID"
-  echo "GCP_LOCATION=us-central1"
+  # "global", not a region. The Gemini 3.x publisher models return 404 NOT_FOUND
+  # on us-central1; they are only served from the global endpoint.
+  echo "GCP_LOCATION=global"
 } >> .env
 
 echo
