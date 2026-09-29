@@ -24,11 +24,20 @@ checks that run in CI.
 Gemini 3.5 Flash Lite on Vertex AI, scored against 200 messages labelled by hand. Reproducible
 offline from the committed cache: `python -m src.evaluate --split golden --run final_vertex`.
 
-† **The routing rows are scored against human labels. The reply row is not** — it is an
-LLM judge, and judge-vs-human agreement is not yet established (2 of 60 blinded ratings).
-Read 81.4% as provisional. `reports/judge_robustness.md` measures this judge approving the
-agent's own longer drafts +8pp more often, and it is now the same model family as the agent,
-so the bias runs toward flattery.
+† The routing rows are scored against human labels. The reply row is an LLM judge — **validated
+against 60 blinded human ratings: Cohen's κ = 0.63 on the send decision, 82% agreement**
+([`reports/judge_agreement.md`](reports/judge_agreement.md)).
+
+The judge is **more conservative than the human rater, not less**. It approves 53% where the
+human approves 62%, and on the agent's own drafts 73% against the human's 87% — so 81.4% is
+more likely understated than inflated. That was not the expected result: the judge is the same
+model family as the agent, and `judge_robustness.md` measures it favouring longer drafts by
++8pp, so self-preference was the prediction. It did not survive contact with the ratings.
+
+**Where the judge is unreliable is `grounded`: κ = 0.18**, passing 92% against the human's 73%.
+It is too lenient on exactly the criterion that catches hallucination, which is why groundedness
+is not reported as a headline number. (`tone` shows κ = −0.02, but both raters pass ~97% — there
+is no variance for κ to measure, so that cell means nothing.)
 
 ### The stand-in was not a neutral proxy
 
@@ -55,7 +64,7 @@ The same model run through AI Studio instead of Vertex (`runs/final_gemini`) rep
 | 200-message golden set, hand-labelled | done |
 | Guardrails: injection screening, PII redaction, unverifiable-claim blocking | done |
 | Service, container, feedback capture, deploy gate | done |
-| **Judge-vs-human agreement (60 blinded ratings)** | **2/60 rated** — κ not reportable yet |
+| Judge-vs-human agreement (60 blinded ratings) | done — κ = 0.63 on the send decision |
 | Final numbers on a live model | done — Gemini 3.5 Flash Lite on Vertex AI (`runs/final_vertex`) |
 | Cloud Run demo endpoint | not deployed |
 

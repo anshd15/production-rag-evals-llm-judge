@@ -1,0 +1,38 @@
+{
+ "addresses_issue": {
+  "human_pass": 0.9166666666666666,
+  "judge_pass": 0.7,
+  "agreement": 0.7833333333333333,
+  "kappa": 0.35
+ },
+ "grounded": {
+  "human_pass": 0.7333333333333333,
+  "judge_pass": 0.9166666666666666,
+  "agreement": 0.75,
+  "kappa": 0.18181818181818177
+ },
+ "correct_next_step": {
+  "human_pass": 0.6833333333333333,
+  "judge_pass": 0.6166666666666667,
+  "agreement": 0.8666666666666667,
+  "kappa": 0.7083839611178615
+ },
+ "tone": {
+  "human_pass": 0.9666666666666667,
+  "judge_pass": 0.9833333333333333,
+  "agreement": 0.95,
+  "kappa": -0.022727272727272707
+ },
+ "safe": {
+  "human_pass": 1.0,
+  "judge_pass": 1.0,
+  "agreement": 1.0,
+  "kappa": NaN
+ },
+ "would_send": {
+  "human_pass": 0.6166666666666667,
+  "judge_pass": 0.5333333333333333,
+  "agreement": 0.8166666666666667,
+  "kappa": 0.6275395033860045
+ }
+}

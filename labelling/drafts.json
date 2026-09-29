@@ -2,10 +2,15 @@
  {
   "n": 1,
   "id": "d01",
-  "thread_so_far": [],
-  "incoming_tweet": "why isn’t star shopping by lil peep on spotify",
-  "reference_reply_spotify_actually_sent": "Hey there! Can you let us know which country your Spotify account is set to? We'll be right here waiting",
-  "draft_to_rate": "Hey! We'd love to have all his music available. Sometimes content gets removed due to licensing, but hopefully we'll have it back soon: [link]"
+  "thread_so_far": [
+   {
+    "who": "SpotifyCares",
+    "text": "Something’s not quite right, and we’re looking into it. Thanks for your reports!"
+   }
+  ],
+  "incoming_tweet": "Yeah it's not working",
+  "reference_reply_spotify_actually_sent": "Hey Jesse. We had a little hiccup earlier, but everything should be running as smooth as Smooth Jazz now!",
+  "draft_to_rate": "That's frustrating. Could you DM us your account's email address? We'll take a closer look at what's going on [link]"
  },
  {
   "n": 2,
@@ -21,24 +26,24 @@
   "thread_so_far": [
    {
     "who": "Customer",
-    "text": "Device is Android phone (Nexus 5x), happens on that and on Win10 laptop (tho, of course, I can't connect to Chromecast straight from the laptop; I have to connect to it via the phone first). Latest versions of Spotify, I believe."
+    "text": "Hey, @user, can you please explain what the hell order my downloaded albums are in? And why can’t I CHOOSE the order? And why can’t it be a list?"
    },
    {
     "who": "SpotifyCares",
-    "text": "Got it. Does logging out > restarting your devices > logging back in help at all? Keep us posted"
+    "text": "Hey there! Can you let us know your device, operating system, and Spotify version? We'll see what we can suggest"
    },
    {
     "who": "Customer",
-    "text": "I mean, yeah, it usually does. The problem is that I'm trying to listen to a continuous playlist or album uninterrupted. It fixes the error but doesn't solve the problem."
+    "text": "Great, thank you. I’m on an iPhone with iOS 11, but I think this has been a problem across multiple devices and operating systems since I’ve started using Spotify."
    },
    {
     "who": "SpotifyCares",
-    "text": "Thanks for the heads-up. Could you try restarting your WiFi router to see if you can play your tracks and playlists smoothly? We'd also suggest trying different connections"
+    "text": "Thanks! Can you check out this page and see if it helps: [link] If it doesn't, get back to us. We'll see what else we can suggest"
    }
   ],
-  "incoming_tweet": "will reset the router when I get home. What do you mean by different connections?",
-  "reference_reply_spotify_actually_sent": "We'd like to see how it plays out when you use different WiFi networks to connect your devices to your Chromecast Audio. We'll be on the lookout for your update",
-  "draft_to_rate": "Try connecting to a different network (mobile data if on WiFi, or a different WiFi). Let us know if that helps!"
+  "incoming_tweet": "Thanks, but that’s not exactly a solution. There’s still no way to sort downloads/offline music.",
+  "reference_reply_spotify_actually_sent": "We understand. We can see how that’d be handy. Thanks for taking the time to reach out – your feedback's been noted",
+  "draft_to_rate": "We hear you! We'll make sure to pass your feedback along to the right folks so they can look into it. Let us know if you need anything else!"
  },
  {
   "n": 4,
@@ -63,7 +68,7 @@
   ],
   "incoming_tweet": "That really does - thank you!",
   "reference_reply_spotify_actually_sent": "You're welcome! We're always here to lend a helping hand. If you ever need anything else, just shout and we'll come running 🏃",
-  "draft_to_rate": "You're welcome! If you need anything else, just shout. We're here for you 💚"
+  "draft_to_rate": "No problem! If you ever need help with anything else, you know where to find us. 😄"
  },
  {
   "n": 6,
@@ -79,7 +84,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Is Spotify down?? @user",
   "reference_reply_spotify_actually_sent": "Hey Matt! Everything should be running smoothly now. Let us know if you're still getting issues",
-  "draft_to_rate": "Hey! Everything looks good on our end. Can you tell us what's happening exactly? We'll help out"
+  "draft_to_rate": "Hey! Everything looks good on our end. Can you tell us what's happening exactly? We'll help out 🎧"
  },
  {
   "n": 8,
@@ -103,7 +108,7 @@
   "thread_so_far": [],
   "incoming_tweet": "is there something going on with the iPhone app? I can’t get anything except 5 songs to load. Tried rebooting, re-installing. Nothing works.",
   "reference_reply_spotify_actually_sent": "Hey, thanks for the report! We had a little hiccup earlier, but everything should be running just fine now",
-  "draft_to_rate": "Sorry to hear that! Can you DM us your account's email? We'll look into it [link]"
+  "draft_to_rate": "Sorry to hear that! Since you've already tried those steps, our tech team can look into this further. Send us a DM with your account email and the device/app version you're on."
  },
  {
   "n": 11,
@@ -127,7 +132,7 @@
   "thread_so_far": [],
   "incoming_tweet": "got an email about upcoming gigs in Dublin I mights like and that's great! Only issue is that click on #Tosca @user is taking me to Puccini's Tosca gig @user",
   "reference_reply_spotify_actually_sent": "Hey Nico, help's here! Can you send us a screenshot of the email you received, along with the link to the page you're directed to? We'll take a look",
-  "draft_to_rate": "Sorry about that! Can you send us a screenshot? We'll look into it [link]"
+  "draft_to_rate": "Can you DM us a screenshot of the email you received? It'd be great if you could also include the link that you've clicked [link]"
  },
  {
   "n": 14,
@@ -135,15 +140,15 @@
   "thread_so_far": [],
   "incoming_tweet": "fix your shit so i can listen to my music. @user thanks.",
   "reference_reply_spotify_actually_sent": "Hey Josh, thanks for bearing with us. Everything’s looking good on our end now - are you still having this issue?",
-  "draft_to_rate": "What device, OS, and Spotify version are you using? If you see error messages, a screenshot would help"
+  "draft_to_rate": "Hi there! Sorry to hear it's not working. What device, operating system, and Spotify version are you using? Let us know and we'll check it out [link]"
  },
  {
   "n": 15,
   "id": "d15",
   "thread_so_far": [],
-  "incoming_tweet": "hi, the app crashes everytime I try to create a new playlist in a folder (on the Android app). Will it be fixed?",
-  "reference_reply_spotify_actually_sent": "Hey Alessia, that's not cool! Can you let us know the device, OS, and Spotify version you're using? We'll see what we can suggest",
-  "draft_to_rate": "Hey! Can you tell us your device, OS, and Spotify version? We'll see what we can suggest"
+  "incoming_tweet": "Uh oh. @user : did your desktop version just went boom? (@user I'm having the same problem, brah.)",
+  "reference_reply_spotify_actually_sent": "Hey Oakley, that doesn't sound fun! Could you tell us more about what's happening? We'll see what we can suggest",
+  "draft_to_rate": "Hey there! Help's here. Can you let us know your device, operating system, and the Spotify version you're using? We'll take a look 🎧"
  },
  {
   "n": 16,
@@ -159,7 +164,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Hey @user you missed a song on a blink 182 sound track, what went wrong is not on it! @user make them add it please.",
   "reference_reply_spotify_actually_sent": "Hey there! Fingers crossed we'll be able to have it soon, but there's info about Spotify content here: [link]",
-  "draft_to_rate": "Our Artist Support team can help with this. Reach out at [link]"
+  "draft_to_rate": "Hey! Music availability can vary, but we'd be happy to check on this for you. Could you let us know the exact track and album name?"
  },
  {
   "n": 18,
@@ -178,9 +183,9 @@
   "n": 19,
   "id": "d19",
   "thread_so_far": [],
-  "incoming_tweet": "Hey Spotify my password was reset by you guys but your password reset page isn’t working! It gives a CSRF invalid token error! Please help!",
-  "reference_reply_spotify_actually_sent": "Hi, we've just replied to your DM. We'll carry on chatting there",
-  "draft_to_rate": "Hey! Can you DM us your account's email address? We'll take a look backstage [link]"
+  "incoming_tweet": "I had a payment made on 11/19 but Spotify was showing I didn't have a Premium subscription.",
+  "reference_reply_spotify_actually_sent": "Hey Darwin, help's here! Can you DM us your account's username and email address? We'll take a look backstage [link]",
+  "draft_to_rate": "Hey there! Can you DM us your account's email address? We'll take a look backstage [link]"
  },
  {
   "n": 20,
@@ -204,7 +209,7 @@
   "thread_so_far": [],
   "incoming_tweet": "When @user uploads your new song to the wrong account AGAIN 🙃☹️ @user and @user plzplzplz stop this from happening to ussssss we love uuuuu plz love us backkkkk ❤️ [link]",
   "reference_reply_spotify_actually_sent": "Hey Harry! Sorry about that. We’d recommend reaching out to your distributor/aggregator. They'll work with our team to make sure your artist page gets fixed up",
-  "draft_to_rate": "Can you DM us your account's username or email address? We'll take a look backstage [link]"
+  "draft_to_rate": "Hey there! Help's here. Can you send us the artist link? Just tap the three dots > Share > Copy Link. We'll check what's happening backstage 🎧"
  },
  {
   "n": 23,
@@ -220,7 +225,7 @@
   "thread_so_far": [],
   "incoming_tweet": "I am trying to reconnect my spotify to hulu and I keep getting an error message on the activation screen",
   "reference_reply_spotify_actually_sent": "Hey Anna! We've just replied to your DM. Let's carry on chatting there",
-  "draft_to_rate": "Hey! Help's here. Can you DM us your account's email address? We'll take a look backstage [link]"
+  "draft_to_rate": "Hey! Help's here. Can you DM us your account's email address or username? We'll take a look backstage [link]"
  },
  {
   "n": 25,
@@ -228,7 +233,7 @@
   "thread_so_far": [],
   "incoming_tweet": "I cancelled my subscription last november when I had a free trial. I have not logged into the account since that time, other than today to cancel again. I need to be refunded 9 months of service, if you look at the usage logs you will see this is the case @user",
   "reference_reply_spotify_actually_sent": "Hi there! Can you DM us your account's email address or username? We'll take a look backstage [link]",
-  "draft_to_rate": "Could you send us your account's email and username via DM? We'll take a look backstage [link]"
+  "draft_to_rate": "Hey there! Can you DM us your account's email address? We'll take a look [link]"
  },
  {
   "n": 26,
@@ -278,15 +283,15 @@
   ],
   "incoming_tweet": "thanks!",
   "reference_reply_spotify_actually_sent": "No worries! Just give us a shout if the problem persists. We're... [link]",
-  "draft_to_rate": "You're welcome! Reach out anytime you need us 🙂"
+  "draft_to_rate": "Awesome! We're glad to hear it's working fine now. Just send us a tweet or a DM if you need help with anything else. [link] 😉"
  },
  {
   "n": 29,
   "id": "d29",
   "thread_so_far": [],
-  "incoming_tweet": "I had a payment made on 11/19 but Spotify was showing I didn't have a Premium subscription.",
-  "reference_reply_spotify_actually_sent": "Hey Darwin, help's here! Can you DM us your account's username and email address? We'll take a look backstage [link]",
-  "draft_to_rate": "Hey! Can you DM us your account's email address or username? We'll take a look backstage [link]"
+  "incoming_tweet": "hi, the app crashes everytime I try to create a new playlist in a folder (on the Android app). Will it be fixed?",
+  "reference_reply_spotify_actually_sent": "Hey Alessia, that's not cool! Can you let us know the device, OS, and Spotify version you're using? We'll see what we can suggest",
+  "draft_to_rate": "Hey! We'd love to help with this. What model of device are you using, and what are your current Android and Spotify versions? 🎧"
  },
  {
   "n": 30,
@@ -318,7 +323,7 @@
   "thread_so_far": [],
   "incoming_tweet": "what's up with the app? [link]",
   "reference_reply_spotify_actually_sent": "Hey, thanks for the report! We had a little hiccup earlier, but everything should be running just fine now",
-  "draft_to_rate": "Hey! Can you let us know the device, OS, and Spotify version you're using? We'll see what we can suggest"
+  "draft_to_rate": "Hey there! Can you let us know the device, operating system, and Spotify version you're using? We'll see what we can suggest."
  },
  {
   "n": 34,
@@ -350,7 +355,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Dear @user! As a fresh father and bi #Spotify fan, may I ask you to add some #real #chillout #music for my #newborn #baby like the following: [link] #ThankYou #Chillout #Relax #HairDryer",
   "reference_reply_spotify_actually_sent": "Hey Amancio! Fingers crossed we'll be able to have it soon, but there's info about Spotify content here: [link] Congrats on becoming a dad 🎉",
-  "draft_to_rate": "Hey! This sounds like something for our Artist Services friends. You can reach out here: [link]"
+  "draft_to_rate": "Hey there, thanks for the request! We’ll have it available to you as soon as it’s available to us. More info about Spotify content here: [link]"
  },
  {
   "n": 38,
@@ -358,7 +363,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Upgraded to @user premium via family plan. Clicked to invite family members and entered info. Realized after it was asking me to confirm MY details with no way to change it in my profile. Support can't change it. @user you should totally change this, not good.",
   "reference_reply_spotify_actually_sent": "Hi there! Can you DM us your account's username or email address? We'll take a look backstage [link]",
-  "draft_to_rate": "Hey! Can you DM us your account's email address? We'll take a look backstage [link]"
+  "draft_to_rate": "Thanks for sharing this feedback with us! We'll make sure to pass your thoughts on the Family plan setup process along to the right team. Let us know if you need help with anything else!"
  },
  {
   "n": 39,
@@ -372,9 +377,9 @@
   "n": 40,
   "id": "d40",
   "thread_so_far": [],
-  "incoming_tweet": "So far the worst part of being a graduate is that I lost my @user @user discount :/ I’ll miss you but I have student loans to pay off now",
-  "reference_reply_spotify_actually_sent": "Hey there! Check out [link] for a more affordable Premium option. Hope this helps",
-  "draft_to_rate": "Hey! Can you DM us your account's email address? We'll take a look backstage [link]"
+  "incoming_tweet": "I can't access my account, keeps saying oops somethings wrong try later, same message after waiting until later",
+  "reference_reply_spotify_actually_sent": "Hey Tyler, help's here! Could you send us a DM with your account's email address or username? We'll take a look backstage [link]",
+  "draft_to_rate": "Hey! Help's here. Can you DM us your account's email address and tell us more about what's happening? We'll see what we can suggest [link]"
  },
  {
   "n": 41,
@@ -398,7 +403,7 @@
   "thread_so_far": [],
   "incoming_tweet": "This is the most annoying thing of all time @user [link]",
   "reference_reply_spotify_actually_sent": "Sorry to hear that you feel that way. Currently, there's a limit of 3,333 downloaded songs per device. There's more info here: [link] Hope this clears things up",
-  "draft_to_rate": "Hey! We're here to help. Can you tell us what's going on?"
+  "draft_to_rate": "We hear you! We'll pass your feedback on to the right folks so they can check it out. Let us know if you need help with anything else."
  },
  {
   "n": 44,
@@ -406,7 +411,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Dear @user, you keep asking to go premium again and again. And I just went premium to skip ads, the first thing that happens is I'm unable to get rid of this ad! WTH!! [link]",
   "reference_reply_spotify_actually_sent": "Hey there! Could you send us a DM with your account's email address? We'll take a look backstage [link]",
-  "draft_to_rate": "Can you DM us your account's email address? We'll take a closer look [link]"
+  "draft_to_rate": "Hi there! That doesn't sound right. Can you DM us your account's email address or username? We'll take a look under the hood [link]"
  },
  {
   "n": 45,
@@ -414,7 +419,7 @@
   "thread_so_far": [],
   "incoming_tweet": "hey there. I see you're offering premium for 99 cents for 3 months. Can you apply that to my current premium account?",
   "reference_reply_spotify_actually_sent": "Hi Sebastian! Could you DM us your account's email address? We'll take a look backstage [link]",
-  "draft_to_rate": "This offer's for new subscribers only. Can you DM us your account's email? We'll see what we can suggest [link]"
+  "draft_to_rate": "Hey there! Right now, this offer's for new subscribers only. Stay tuned for more deals for existing Premium subscribers, though 🙂"
  },
  {
   "n": 46,
@@ -431,7 +436,7 @@
   ],
   "incoming_tweet": "Yeah - it came back online just as I was leaving the gym! #quietsession",
   "reference_reply_spotify_actually_sent": "Great! Let us know if there's anything else we can help you with 🙂",
-  "draft_to_rate": "Awesome! Glad to hear it's working. For anything else, just give us a shout 🙂"
+  "draft_to_rate": "Glad to hear it's working now! For anything else, just give us a shout. [link] 🙂"
  },
  {
   "n": 47,
@@ -456,7 +461,7 @@
   ],
   "incoming_tweet": ":) thanks for the reply. I need this option daily, so sure others out there do to. Hope to see it soon haha. [link]",
   "reference_reply_spotify_actually_sent": "We understand! Don't worry, you can count on us to pass your suggestion. If you need anything else, just give us a shout 🙂",
-  "draft_to_rate": "You're welcome! We'll make sure your feedback reaches the right team 🙂"
+  "draft_to_rate": "You're welcome! Stay awesome 🌟"
  },
  {
   "n": 49,
@@ -481,7 +486,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Im trying to add a new account to my family account but it says the account is allready registered with facebook, however when i click the login with facebook button it says there's the facebookaccount is not registered with spotify",
   "reference_reply_spotify_actually_sent": "Hey Kris, help's here! Could you send us the account's email address via DM? We'll take a look and see what we can suggest 🔍 [link]",
-  "draft_to_rate": "Can you DM us the emails for both accounts? We'll look into this [link]"
+  "draft_to_rate": "Hey! Help's here. Can you DM us your account's email address or username? We'll take a look under the hood [link]"
  },
  {
   "n": 51,
@@ -497,7 +502,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Is there a way to reset my listening history? I let my son have access to my account while I was traveling out of range of Spotify. Now everything is populated with his songs and recommendations. I am opening a family account to let him have his own account now.",
   "reference_reply_spotify_actually_sent": "Hey Rick, help's here! We're afraid it's currently not possible to reset your listening history. Don't worry, we'll let the right team know it's something you'd like to see. Also, could you DM us your account's username or email address? We'll see what we can suggest [link]",
-  "draft_to_rate": "Can you DM us your account's email address? We'll see what we can suggest [link]"
+  "draft_to_rate": "Hey! Can you DM us your account's email address? We'll see what we can suggest [link]"
  },
  {
   "n": 53,
@@ -505,7 +510,7 @@
   "thread_so_far": [],
   "incoming_tweet": "How to add an account to a new phone as part of family plan?",
   "reference_reply_spotify_actually_sent": "Hi there, the cavalry's here! If you'd like to add a member to your Family plan, we'd suggest following the steps under \"Manage your Premium for Family plan\" at [link] Hope this helps",
-  "draft_to_rate": "Can you DM us your account's email address? We'll take a look under the hood [link]"
+  "draft_to_rate": "Hey! Help's here. We have all the info on adding members to your Family plan right here: [link] Let us know how it goes 🙂"
  },
  {
   "n": 54,
@@ -526,7 +531,7 @@
   ],
   "incoming_tweet": "trying to hide their incompetencies. Users are paying premium for your service and you try to hide the problems we experience. [link]",
   "reference_reply_spotify_actually_sent": "Hey there, we understand your frustration. Could you send us a DM with your account's email address and username? We'll take a look backstage [link]",
-  "draft_to_rate": "Can you let us know the device, OS, and Spotify version you're using? We'll see what we can suggest"
+  "draft_to_rate": "Hey there! Sorry for the trouble. Can you let us know your device, OS, and Spotify version? We'll take a closer look."
  },
  {
   "n": 56,
@@ -542,7 +547,7 @@
   "thread_so_far": [],
   "incoming_tweet": "Why isn't the Distant Relatives album not on @user or @user? One of my favs @user @user",
   "reference_reply_spotify_actually_sent": "Hey! Can you let us know the title of the Distant Relatives album you're looking for, and where are you based? We'll take a closer look",
-  "draft_to_rate": "We'd love to have it available! Check here for info: [link]"
+  "draft_to_rate": "Hey there! We’d love to have it available, but we have some info about content here: [link]"
  },
  {
   "n": 58,
