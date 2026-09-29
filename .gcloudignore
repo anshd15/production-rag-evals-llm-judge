@@ -1,0 +1,30 @@
+# Build context for `gcloud builds submit`.
+#
+# WITHOUT this file gcloud falls back to .gitignore, which excludes
+# data/processed/emb_cache/ — and the image would then re-embed 33.8k rows on
+# every cold start. The serving index has to ship. Everything the container
+# never opens is excluded instead, because the context is uploaded on each build.
+.git/
+.venv/
+__pycache__/
+*.pyc
+
+# Huge, and the container never reads it: the processed parquet is enough.
+data/raw/
+
+# Evaluation and authoring artefacts — not part of serving.
+runs/
+reports/
+labelling/
+tests/
+eval/
+deploy/
+data/golden/
+llm_queue/
+*.md
+
+# Experiment-only embedding caches. history_index_*.npy is the serving index
+# and is deliberately NOT excluded.
+data/processed/emb_cache/rq_*.npy
+data/processed/emb_cache/discovery_*.npy
+data/processed/emb_cache/eval_pool_*.npy
