@@ -54,6 +54,10 @@ class Settings:
         default_factory=lambda: float(_clean("COST_PER_MTOK_IN", "0") or 0))
     cost_per_mtok_out: float = field(
         default_factory=lambda: float(_clean("COST_PER_MTOK_OUT", "0") or 0))
+    # Vertex AI. No key: credentials come from Application Default Credentials,
+    # so nothing secret is ever written to a file or a transcript.
+    gcp_project: str = field(default_factory=lambda: _clean("GCP_PROJECT"))
+    gcp_location: str = field(default_factory=lambda: _clean("GCP_LOCATION", "us-central1"))
     # Retrieval. numpy is the default so the repo runs with no extra service.
     retrieval_backend: str = field(
         default_factory=lambda: (_clean("RETRIEVAL_BACKEND", "numpy") or "numpy").lower())
