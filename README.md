@@ -31,8 +31,10 @@ against 60 blinded human ratings: Cohen's κ = 0.63 on the send decision, 82% ag
 The judge is **more conservative than the human rater, not less**. It approves 53% where the
 human approves 62%, and on the agent's own drafts 73% against the human's 87% — so 81.4% is
 more likely understated than inflated. That was not the expected result: the judge is the same
-model family as the agent, and `judge_robustness.md` measures it favouring longer drafts by
-+8pp, so self-preference was the prediction. It did not survive contact with the ratings.
+model family as the agent, and on the stand-in run `judge_robustness.md` measured it favouring
+longer drafts by +8pp, so self-preference was the prediction. It did not survive contact with the
+ratings — and on the live run that verbosity gap is +1.3pp, so most of the original flag was an
+artefact of the stand-in too.
 
 **Where the judge is unreliable is `grounded`: κ = 0.18**, passing 92% against the human's 73%.
 It is too lenient on exactly the criterion that catches hallucination, which is why groundedness

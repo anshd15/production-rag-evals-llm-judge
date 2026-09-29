@@ -49,7 +49,7 @@ def analyse(run: str, split: str) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--run", default="final")
+    ap.add_argument("--run", default="final_vertex")
     ap.add_argument("--split", default="golden")
     args = ap.parse_args()
     res = analyse(args.run, args.split)

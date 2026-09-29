@@ -71,29 +71,54 @@ verdicts are only trusted as far as they match a human — see §6.
 
 ## 3. Results
 
-### Golden set (n=200, human labels) — `runs/final/golden/summary.md`
+### Golden set (n=200, human labels) — `runs/final_vertex/golden/summary.md`
+
+Gemini 3.5 Flash Lite on Vertex AI, judge `gemini-3.1-flash-lite`.
 
 | System | Intent acc | Esc. recall | Esc. precision | Automation | Unsafe auto | Would-send | Good automation |
 |---|---|---|---|---|---|---|---|
-| **agent** | **71.5%** [65–78] | **86.4%** [78–94] | 75.0% | 62.0% | **4.5%** | **73.0%** [67–79] | 39.5% [33–46] |
-| simple (TF-IDF + NN reply) | 51.5% [45–58] | 57.6% [45–70] | 76.0% | 75.0% | 14.0% | 44.5% [38–51] | 25.0% [19–31] |
-| trivial (majority + canned reply) | 23.0% [18–29] | 0.0% | — | 100% | 33.0% | 11.0% [7–16] | 10.5% [6–16] |
+| **agent** | **75.5%** [69–81] | **81.8%** [72–91] | 79.4% | 66.0% | **6.0%** | **81.4%** [76–86] | 46.2% [39–53] |
+| simple (TF-IDF + NN reply) | 51.5% [45–58] | 57.6% [45–70] | 76.0% | 75.0% | 14.0% | 44.5% [37–51] | 23.0% [18–28] |
+| trivial (majority + canned reply) | 23.0% [18–29] | 0.0% | — | 100% | 33.0% | 7.0% [4–11] | 7.0% [4–11] |
 
 The two baselines are the two ways to be wrong. The trivial system automates everything and
 auto-replies into a human-needed case a third of the time; the simple one misses 42% of the
 escalations and its copied replies are approved less than half as often. The agent auto-handles
-62% of traffic while auto-sending into a human-needed case 4.5% of the time.
+66% of traffic while auto-sending into a human-needed case 6.0% of the time.
 
-Paired bootstrap, agent minus the simple baseline: intent accuracy **+20.0pp** [+12.0, +28.0],
-would-send **+28.5pp** [+21.0, +36.5]; P(agent not better) = 0.000 for both.
+Paired bootstrap, agent minus the simple baseline: intent accuracy **+24.0pp** [+15.5, +32.5],
+would-send **+36.7pp** [+29.6, +44.7]; P(agent not better) = 0.000 for both.
 
-Per-class recall is uneven: `how_to_usage` collapses to 21% (see failure mode 3) while
-`content_availability` reaches 100% precision. Full table in `runs/final/golden/summary.md`.
+Per-class recall is uneven: `how_to_usage` collapses to 29% (see failure mode 3) while
+`billing_payment` and `content_availability` reach 100%. Full table in the run summary.
 
-Rubric pass rates for the agent: `safe` 100%, `tone` 98%, `grounded` 90%, `addresses_issue` 84%,
-`correct_next_step` 75% — the last is the weakest link and the target of failure mode 4.
+Rubric pass rates for the agent: `safe` 100%, `tone` 100%, `grounded` 98%, `addresses_issue` 96%,
+`correct_next_step` 86% — the last is the weakest link and the target of failure mode 4. Note that
+`grounded` 98% is the judge's opinion and the judge is demonstrably too lenient on exactly this
+criterion (§7, κ = 0.18); it should not be read as a 98% hallucination-free rate.
+
+### The stand-in was not a neutral proxy
+
+Development ran against a stand-in model, with the live run deferred until the harness was
+finished. Swapping the real model in moved the headline in **both** directions:
+
+| | Stand-in (`runs/final`) | Gemini on Vertex (`runs/final_vertex`) | |
+|---|---|---|---|
+| Escalations caught | 86.4% | **81.8%** | safety **overstated** by 4.6pp |
+| Unsafe auto-send | 4.5% | **6.0%** | safety **overstated** by 1.5pp |
+| Intent accuracy | 71.5% | **75.5%** | quality understated by 4.0pp |
+| Would-send | 73.0% | **81.4%** | quality understated by 8.4pp |
+
+The direction matters more than the size. A stand-in that made the system look *worse* would be a
+harmless conservatism; this one made it look **safer than it is**, which is the failure mode that
+ships. The same model reached through AI Studio rather than Vertex (`runs/final_gemini`)
+reproduces 81.8% and 6.0% exactly, so the gap is the model, not the transport.
 
 ### Dev set (n=250, silver labels) — the same comparison with routing metrics
+
+**These are still stand-in numbers.** The dev set drove the iteration loop and has not been
+re-run on Gemini; given the golden-set gap above, treat the dev figures as indicative of the
+*shape* of the comparison and not as measurements of the shipped model.
 
 | System | Intent acc | Macro-F1 | Esc. recall | Esc. precision | Automation | Unsafe auto | Would-send | Good automation | Bad auto-send |
 |---|---|---|---|---|---|---|---|---|---|
@@ -186,9 +211,10 @@ is **not** yet covered.
   *same* taxonomy text, so they share blind spots (nothing about outages, so both sides get
   outage tweets consistently wrong and no metric notices). Only the golden set is human-labelled,
   and it is the only number that should be quoted.
-- **The judge is unvalidated and shares a model family with the agent.** Only 2 of 60 human
-  ratings exist, so `would-send 73%` currently rests on a model grading a model — the single
-  weakest claim in this report.
+- **`grounded` is the number not to trust.** The judge is now validated (§7, κ = 0.63 on the send
+  decision), but per-criterion it is badly calibrated on groundedness: κ = 0.18, passing 98% of
+  the agent's drafts where a human passes 73% of a blinded sample. Groundedness is the criterion
+  that catches hallucination, and it is the one the judge is worst at. Do not quote it.
 - **The single biggest lever was a definition, not a model.** Re-labelling with a sharper
   escalation rule moved escalation precision 64% → 78% **with the predictions unchanged**. Any
   "automation rate" quoted for a support bot is a statement about where someone drew the
@@ -203,33 +229,60 @@ is **not** yet covered.
   reply than the 2017 agent's can be marked down for differing from it.
 - **Nothing here measures outcomes.** "Would a team lead send this?" is not "did the customer's
   problem get solved" — no resolution, CSAT or re-contact signal exists in this dataset.
-- **The numbers are model-specific.** They were produced with a stand-in model (see §8); switching
-  to Gemini re-runs every call and will move them.
+- **The numbers are model-specific, and I have now measured how much.** The golden figures come
+  from Gemini 3.5 Flash Lite on Vertex. The stand-in used during development reported escalation
+  recall 4.6pp higher and unsafe-auto 1.5pp lower than the real model — i.e. the development-time
+  numbers were *safer than the truth*. Any headline here is a statement about one model on one
+  day; the dev-set table has not been re-run at all.
 
 ## 7. Judge quality (does the LLM judge agree with a human?)
 
-**Not yet established — 2 of 60 drafts rated.** Cohen's κ on n=2 is meaningless, so nothing is
-reported rather than publishing a number that looks like evidence. Until those ratings land, every
-reply-quality figure in §3 should be read as "an LLM's opinion of an LLM", and the honest headline
-is the routing metrics, which are scored against human labels.
+**Established: Cohen's κ = 0.63 on the send decision, 82% raw agreement, n=60.**
+(`reports/judge_agreement.md`, drafts sampled from `runs/final_vertex`.)
 
-The set-up is in place: 60 drafts sampled across the agent and both baselines, the system that
-wrote each one withheld from the rater, and `src/judge_agreement.py` computing per-criterion
-agreement and κ once ratings exist. Below 30 ratings it now writes "not established" instead of a
-number — the earlier version published a κ computed on n=2.
+| Criterion | Human pass | Judge pass | Agreement | κ |
+|---|---|---|---|---|
+| would_send | 62% | 53% | 82% | **0.63** |
+| correct_next_step | 68% | 62% | 87% | **0.71** |
+| addresses_issue | 92% | 70% | 78% | 0.35 |
+| **grounded** | **73%** | **92%** | 75% | **0.18** |
+| tone | 97% | 98% | 95% | −0.02 |
+| safe | 100% | 100% | 100% | n/a |
 
-**What can be checked without a human** (`reports/judge_robustness.md`): the judge approves the
-agent's longer drafts 8.0pp more often than its shorter ones (77.0% vs 69.0% either side of the
-80-character median). That is consistent with verbosity bias, but confounded — a longer reply
-often does address more of the question — so it is a flag for the human check to resolve, not a
-finding on its own. Position bias cannot arise here by construction: the rubric scores one draft
-at a time rather than ranking a pair. Self-preference remains untested until a judge from a
-different model family scores the same drafts, which is one flag away
-(`GEMINI_JUDGE_MODEL`).
+60 drafts across the agent and both baselines, with the authoring system withheld from the rater.
+
+**The predicted bias was backwards.** The judge shares a model family with the agent, and on the
+stand-in run `judge_robustness.md` measured it approving the agent's longer drafts 8.0pp more
+often — so self-preference was the expectation. Two independent checks now contradict it. The
+ratings show the judge is harsher, not kinder; and re-running the robustness check on the live
+run drops the verbosity gap from **+8.0pp to +1.3pp**, i.e. most of that flag was an artefact of
+the stand-in rather than a property of the judge. The judge is
+**harsher** than the human everywhere it matters: 53% approved against 62% overall, and 73%
+against 87% on the agent's own drafts. `would-send 81.4%` in §3 is therefore more likely
+understated than inflated. This is worth stating plainly because the opposite was written in this
+report until the ratings existed.
+
+**The real defect is `grounded`, κ = 0.18.** The judge passes 92% where the human passes 73%. It
+is too lenient on precisely the criterion that catches invention, which is why §3 flags the 98%
+groundedness figure rather than quoting it. Reading the 11 disagreements, the two raters are
+lenient about *different* things — the human accepted "we've already replied to your DM" twice
+where the judge correctly flagged it as an unverifiable claim, while the judge waved through
+generic replies the human marked as not addressing the question. Aggregate agreement of 82% hides
+two differently-shaped error profiles.
+
+**`tone` κ = −0.02 is not a finding.** Both raters pass ~97% of drafts, so there is no variance
+for κ to measure; the statistic is undefined in spirit if not in arithmetic. Stated explicitly so
+the cell is not misread as "the judge cannot assess tone".
+
+**Still untested: self-preference across model families.** Every judgement here comes from a
+Gemini model scoring a Gemini model. The κ result makes naive self-flattery unlikely, but it does
+not rule out shared blind spots — two models from one family can be wrong about the same things
+and agree with each other about it. Scoring the same 60 drafts with a judge from a different
+family is one environment variable away (`VERTEX_JUDGE_MODEL`) and is the obvious next control.
 
 **What is already known about label quality:** the human golden labels agree with the LLM's own
 labels on 83% of intents (κ 0.80) and 91% of escalate decisions (κ 0.79) — so roughly a sixth of
-this task is genuinely contested, which is why the agent's 71.5% should not be read against a
+this task is genuinely contested, which is why the agent's 75.5% should not be read against a
 ceiling of 100%.
 
 ## 8. With one more week

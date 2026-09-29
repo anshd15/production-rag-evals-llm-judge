@@ -1,20 +1,20 @@
-# Judge robustness — final/golden (n=200)
+# Judge robustness — final_vertex/golden (n=200)
 
 Bias checks that need no human ratings. They cannot tell you the judge is *right* —
 only whether it is responding to something other than reply quality.
 
 | System | Judged | Would-send |
 |---|---|---|
-| agent | 200 | 73.0% |
+| agent | 199 | 81.4% |
 | simple | 200 | 44.5% |
-| trivial | 200 | 11.0% |
+| trivial | 200 | 7.0% |
 
 ## Verbosity bias
 
 | System | Median chars | Short drafts | Long drafts | Gap |
 |---|---|---|---|---|
-| agent | 80 | 69.0% | 77.0% | +8.0pp |
-| simple | 107 | 43.1% | 45.9% | +2.8pp |
+| agent | 121 | 80.8% | 82.1% | +1.3pp |
+| simple | 107 | 42.2% | 46.9% | +4.8pp |
 
 ## Not yet measurable here
 

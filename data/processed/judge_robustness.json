@@ -2,8 +2,8 @@
  "n": 200,
  "systems": {
   "agent": {
-   "judged": 200,
-   "would_send": 0.73
+   "judged": 199,
+   "would_send": 0.8140703517587939
   },
   "simple": {
    "judged": 200,
@@ -11,21 +11,21 @@
   },
   "trivial": {
    "judged": 200,
-   "would_send": 0.11
+   "would_send": 0.07
   }
  },
  "verbosity": {
   "agent": {
-   "median_chars": 80.5,
-   "would_send_short": 0.69,
-   "would_send_long": 0.77,
-   "gap_pp": 8.0
+   "median_chars": 121,
+   "would_send_short": 0.8076923076923077,
+   "would_send_long": 0.8210526315789474,
+   "gap_pp": 1.3
   },
   "simple": {
    "median_chars": 107.0,
-   "would_send_short": 0.43137254901960786,
-   "would_send_long": 0.45918367346938777,
-   "gap_pp": 2.8
+   "would_send_short": 0.4215686274509804,
+   "would_send_long": 0.46938775510204084,
+   "gap_pp": 4.8
   }
  }
 }
