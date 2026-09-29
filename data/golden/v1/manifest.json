@@ -12,7 +12,7 @@
  "splits": {
   "golden": "200 human-labelled, test only",
   "dev": "250 LLM-labelled (silver), all tuning happens here",
-  "rating": "60 blinded drafts for judge-vs-human agreement"
+  "rating": "60 blinded drafts for judge-vs-human agreement, sampled from runs/final_vertex"
  },
  "files": [
   {
@@ -38,7 +38,8 @@
   {
    "path": "data/processed/rating_set.jsonl",
    "rows": 60,
-   "sha256": "507cad78ee94f146f6259b4a7bc0980f4e1ac5da327af188b7d2ebcc7d7a8602"
+   "sha256": "ef4bdc252d6c0e1e1a68756cadfa61092fb4181f3f56ffe66626e91680d95e7f",
+   "note": "Resampled 2026-09-30 from runs/final_vertex. The rating set is a sample of DRAFTS, so it is tied to the run that produced them; judging stand-in drafts would not validate the judge that scored the live run. The golden messages and labels below are unchanged, which is why the version is not bumped."
   }
  ],
  "hashing": "sha256 of file content with CRLF normalised to LF"
