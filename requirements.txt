@@ -8,5 +8,5 @@ torch==2.14.0
 google-genai==2.23.0
 pytest==9.1.1
 fastapi==0.120.4
-uvicorn[standard]==0.41.1
+uvicorn[standard]==0.54.0
 qdrant-client==1.16.1

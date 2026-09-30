@@ -1,7 +1,12 @@
 .venv/
 .git/
 data/raw/
-data/processed/emb_cache/
+# The serving index must ship: without it the container re-embeds 33,838 rows
+# on the first request of every cold start, which on Cloud Run exceeds the
+# request timeout and the demo simply never answers. Exclude the
+# experiment-only caches, keep the one the retriever actually loads.
+data/processed/emb_cache/*
+!data/processed/emb_cache/history_index_*.npy
 llm_queue/
 runs/
 labelling/
