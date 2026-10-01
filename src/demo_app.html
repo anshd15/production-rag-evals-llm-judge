@@ -109,6 +109,12 @@
         <div class="row">
           <button class="go" id="go">Triage</button>
           <span class="muted" id="status"></span>
+          <span class="muted" id="quota" style="margin-left:auto"></span>
+        </div>
+        <div class="row" id="signin-row" hidden style="margin-top:10px">
+          <div id="gbtn"></div>
+          <span class="muted" id="whoami"></span>
+          <button id="signout" hidden style="background:none;border:0;text-decoration:underline;cursor:pointer;color:inherit;font:inherit;padding:0">sign out</button>
         </div>
         <div class="chips" id="examples"></div>
       </div>
@@ -223,6 +229,49 @@ function render(d) {
     `<div class="case"><div class="q">${esc(c.text)}</div><div class="a">${esc(c.brand_reply)}</div></div>`).join("");
 }
 
+let QUOTA = null;
+
+function paintQuota(q) {
+  if (!q) return;
+  QUOTA = q;
+  const left = q.remaining;
+  $("quota").textContent = q.signed_in
+    ? `${left} of ${q.limit} left today`
+    : (left > 0 ? `${left} free ${left === 1 ? "message" : "messages"} left` : "free messages used up");
+  $("whoami").textContent = q.signed_in && q.email ? `signed in as ${q.email}` : "";
+  $("signout").hidden = !q.signed_in;
+  // The button only appears once it is useful: a first-time visitor should see a
+  // demo, not a login screen.
+  const needsAuth = q.sign_in_available && !q.signed_in && left <= 1;
+  $("signin-row").hidden = !(needsAuth || q.signed_in);
+  if (needsAuth) renderGoogleButton();
+}
+
+let gRendered = false;
+function renderGoogleButton() {
+  if (gRendered || !window.google || !window.GOOGLE_CLIENT_ID) return;
+  gRendered = true;
+  google.accounts.id.initialize({
+    client_id: window.GOOGLE_CLIENT_ID,
+    callback: async (resp) => {
+      const r = await fetch("/auth/google", {
+        method: "POST", headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({credential: resp.credential})
+      });
+      if (r.ok) paintQuota(await r.json());
+    }
+  });
+  google.accounts.id.renderButton($("gbtn"), {theme: "outline", size: "medium", text: "signin_with"});
+}
+
+$("signout").addEventListener("click", async () => {
+  await fetch("/auth/signout", {method: "POST"});
+  gRendered = false; $("gbtn").innerHTML = "";
+  paintQuota(await (await fetch("/auth/me")).json());
+});
+
+fetch("/auth/me").then(r => r.json()).then(paintQuota).catch(() => {});
+
 async function triage() {
   const text = $("t").value.trim();
   if (!text) return;
@@ -239,8 +288,10 @@ async function triage() {
       const msg = detail && detail.error ? detail.error : (typeof detail === "string" ? detail : "request failed");
       $("out").innerHTML = `<p class="err">${esc(msg)}${r.status === 429 ? " — the demo is rate limited, try again in a minute." : ""}</p>`;
       $("evidence-card").hidden = true;
+      if (r.status === 402 && detail) { paintQuota(detail); renderGoogleButton(); }
     } else {
       render(body);
+      if (body.quota) paintQuota(body.quota);
     }
   } catch (e) {
     $("out").innerHTML = `<p class="err">Could not reach the service.</p>`;
@@ -257,5 +308,7 @@ $("t").addEventListener("keydown", e => {
   if ((e.metaKey || e.ctrlKey) && e.key === "Enter") triage();
 });
 </script>
+<script>window.GOOGLE_CLIENT_ID = "__GOOGLE_CLIENT_ID__";</script>
+<script src="https://accounts.google.com/gsi/client" async defer onload="renderGoogleButton()"></script>
 </body>
 </html>

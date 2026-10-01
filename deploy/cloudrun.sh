@@ -69,7 +69,10 @@ gcloud run deploy "$SERVICE" \
   --cpu-boost \
   --concurrency 8 \
   --min-instances 0 \
-  --max-instances 3 \
+  # 1, not 3. The limiter and LLM_MAX_CALLS are per process, so three instances
+  # meant three independent budgets and a 3x real ceiling. One instance makes
+  # both numbers mean what they say; the cost is more cold starts on a demo.
+  --max-instances 1 \
   --set-env-vars "LLM_OFFLINE=0,LLM_PROVIDER=vertex,GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${GCP_LOCATION},VERTEX_AGENT_MODEL=${AGENT_MODEL},${RETRIEVAL_ENV},RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-12},LLM_MAX_CALLS=${LLM_MAX_CALLS:-2000},GEMINI_RPM=${GEMINI_RPM:-10}" \
   "${SECRET_ARGS[@]}"
 

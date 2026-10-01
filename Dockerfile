@@ -38,4 +38,11 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=180s \
   CMD python -c "import os,urllib.request;urllib.request.urlopen('http://localhost:'+os.environ.get('PORT','8000')+'/healthz')"
 
-CMD ["sh", "-c", "exec uvicorn src.service:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# --proxy-headers: behind Cloud Run the peer is always Google's front end, so
+# request.client.host is the SAME address for every visitor on earth and a
+# "per-client" rate limit silently becomes one shared bucket. The real address
+# is in X-Forwarded-For, which uvicorn ignores unless told to read it -- the
+# default is cautious because that header is attacker-writable in general. It
+# is not here: the container is only reachable through the front end, which
+# overwrites it.
+CMD ["sh", "-c", "exec uvicorn src.service:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips=*"]

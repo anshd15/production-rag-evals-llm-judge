@@ -13,15 +13,19 @@ The retrieval index takes ~2 min to build, so it loads lazily on first use and
 a request id rather than a stack trace — a support queue would rather wait than
 receive a wrong answer.
 """
+import os
 import time
 import uuid
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.responses import FileResponse, PlainTextResponse
+from fastapi.responses import (FileResponse, HTMLResponse, JSONResponse,
+                               PlainTextResponse)
 from pydantic import BaseModel, Field
 
 from src import agent
+from src.auth import (COOKIE, AuthError, charge, cookie_for, identity_from_cookie,
+                      status, used, verify_google_credential)
 from src.feedback import (ACTIONS, pending_review, record_decision, record_outcome,
                           report)
 from src.observability import METRICS, log_event, render_prometheus
@@ -56,6 +60,74 @@ def rate_limit(request: Request):
     _hits[who] = recent
 
 
+def client_ip(request: Request) -> str:
+    """The caller's address, or the proxy's if uvicorn was not told to read
+    X-Forwarded-For. See the Dockerfile: without --proxy-headers every visitor
+    shares one address and therefore one bucket."""
+    return request.client.host if request.client else "unknown"
+
+
+def quota(request: Request):
+    """Free messages first, sign-in after. Attaches the identity to the request.
+
+    402 rather than 401: the caller is not unauthenticated, they have spent an
+    allowance that was deliberately given to them. The body carries the counts so
+    the page can say "1 of 3 left" instead of only reacting once it hits zero.
+    """
+    ident, is_new = identity_from_cookie(request.cookies.get(COOKIE))
+    ip = client_ip(request)
+    if used(ident, ip) >= ident.limit:
+        METRICS["quota_exhausted"] += 1
+        raise HTTPException(status_code=402, detail={
+            "error": ("Free messages used up. Sign in with Google to keep going."
+                      if ident.kind == "anon" else
+                      "Daily limit reached for this account. It resets at midnight UTC."),
+            **status(ident, ip)})
+    request.state.identity, request.state.is_new, request.state.ip = ident, is_new, ip
+
+
+def _with_session(request: Request, body: dict, ident=None) -> JSONResponse:
+    """Set the session cookie when the identity is new or has just changed."""
+    resp = JSONResponse(body)
+    ident = ident or getattr(request.state, "identity", None)
+    if ident is not None and (getattr(request.state, "is_new", False) or ident.kind == "user"):
+        # 30 days, HttpOnly so page scripts cannot read or forge it, SameSite=Lax
+        # so it survives the Google sign-in redirect without riding on cross-site
+        # POSTs, Secure because the service is HTTPS-only.
+        resp.set_cookie(COOKIE, cookie_for(ident), max_age=30 * 24 * 3600, httponly=True,
+                        samesite="lax", secure=True, path="/")
+    return resp
+
+
+@app.get("/auth/me")
+def auth_me(request: Request):
+    ident, is_new = identity_from_cookie(request.cookies.get(COOKIE))
+    request.state.identity, request.state.is_new = ident, is_new
+    return _with_session(request, status(ident, client_ip(request)))
+
+
+@app.post("/auth/google")
+def auth_google(payload: dict, request: Request):
+    """Exchange a Google ID token for a session cookie."""
+    try:
+        claims = verify_google_credential(str(payload.get("credential", "")))
+    except AuthError as exc:
+        METRICS["auth_rejected"] += 1
+        raise HTTPException(status_code=401, detail=str(exc))
+    from src.auth import Identity
+    ident = Identity("user", claims["sub"], claims["email"], claims["name"])
+    METRICS["sign_ins"] += 1
+    log_event("sign_in", subject=claims["sub"][:8])
+    return _with_session(request, status(ident, client_ip(request)), ident)
+
+
+@app.post("/auth/signout")
+def auth_signout():
+    resp = JSONResponse({"signed_in": False})
+    resp.delete_cookie(COOKIE, path="/")
+    return resp
+
+
 class Outcome(BaseModel):
     request_id: str
     action: str = Field(description=" | ".join(ACTIONS))
@@ -83,11 +155,19 @@ def get_retriever():
     return _retriever
 
 
-@app.get("/", response_class=FileResponse)
+@app.get("/", response_class=HTMLResponse)
 def demo():
     """The public face: send a tweet, see the decision and the precedent behind it,
-    and a panel of attacks that make the guardrails fire in front of you."""
-    return FileResponse(Path(__file__).with_name("demo_app.html"))
+    and a panel of attacks that make the guardrails fire in front of you.
+
+    The Google client id is injected here rather than baked into the file: it
+    differs per deployment, and a checked-in placeholder is easier to reason
+    about than a build step. It is a public identifier, not a secret -- the
+    token it produces is verified server-side before it means anything.
+    """
+    page = Path(__file__).with_name("demo_app.html").read_text(encoding="utf-8")
+    return HTMLResponse(page.replace("__GOOGLE_CLIENT_ID__",
+                                     os.getenv("GOOGLE_CLIENT_ID", "").strip()))
 
 
 @app.get("/healthz")
@@ -116,8 +196,8 @@ def metrics():
     return render_prometheus()
 
 
-@app.post("/triage", dependencies=[Depends(require_key), Depends(rate_limit)])
-def triage(req: TriageRequest):
+@app.post("/triage", dependencies=[Depends(require_key), Depends(rate_limit), Depends(quota)])
+def triage(req: TriageRequest, request: Request):
     request_id, t0 = str(uuid.uuid4())[:8], time.perf_counter()
     example = {"msg_id": request_id, "text": req.text,
                "context": [t.model_dump() for t in req.context], "brand_reply": ""}
@@ -156,8 +236,14 @@ def triage(req: TriageRequest):
     # The retrieved cases ride along so a caller can see the evidence behind the
     # draft, not just the draft. A reply with no visible provenance can only be
     # judged on how it reads, which is how plausible-and-wrong replies get sent.
-    return pred | {"request_id": request_id, "latency_ms": latency_ms,
-                   "retrieved_cases": retrieved_cases}
+    # Charged here, not in the dependency: a request that failed before reaching
+    # the model cost nothing, and spending someone's free allowance on our outage
+    # is the kind of small unfairness that makes a demo feel broken.
+    ident, ip = request.state.identity, request.state.ip
+    charge(ident, ip)
+    return _with_session(request, pred | {
+        "request_id": request_id, "latency_ms": latency_ms,
+        "retrieved_cases": retrieved_cases, "quota": status(ident, ip)})
 
 
 @app.post("/feedback")
