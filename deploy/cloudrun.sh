@@ -28,6 +28,10 @@ RUNTIME_SA="${RUNTIME_SA:-rag-evals-agent@${PROJECT_ID}.iam.gserviceaccount.com}
 # "global", not a region: the Gemini 3.x publisher models 404 on us-central1.
 GCP_LOCATION="${GCP_LOCATION:-global}"
 AGENT_MODEL="${VERTEX_AGENT_MODEL:-gemini-3.5-flash-lite}"
+# Public identifier, not a secret: it is served in the page, and the token it
+# produces is verified server-side before it means anything. Unset simply means
+# the sign-in button never appears and everyone gets the anonymous allowance.
+GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID:-}"
 IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/app:$(date +%Y%m%d-%H%M%S)"
 
 echo "==> ensuring the Artifact Registry repository exists"
@@ -73,7 +77,7 @@ gcloud run deploy "$SERVICE" \
   # meant three independent budgets and a 3x real ceiling. One instance makes
   # both numbers mean what they say; the cost is more cold starts on a demo.
   --max-instances 1 \
-  --set-env-vars "LLM_OFFLINE=0,LLM_PROVIDER=vertex,GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${GCP_LOCATION},VERTEX_AGENT_MODEL=${AGENT_MODEL},${RETRIEVAL_ENV},RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-12},LLM_MAX_CALLS=${LLM_MAX_CALLS:-2000},GEMINI_RPM=${GEMINI_RPM:-10}" \
+  --set-env-vars "LLM_OFFLINE=0,LLM_PROVIDER=vertex,GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${GCP_LOCATION},VERTEX_AGENT_MODEL=${AGENT_MODEL},${RETRIEVAL_ENV},RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-12},LLM_MAX_CALLS=${LLM_MAX_CALLS:-2000},GEMINI_RPM=${GEMINI_RPM:-10},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},ANON_FREE_MESSAGES=${ANON_FREE_MESSAGES:-3},USER_DAILY_MESSAGES=${USER_DAILY_MESSAGES:-30}" \
   "${SECRET_ARGS[@]}"
 
 URL=$(gcloud run services describe "$SERVICE" --region "$REGION" --project "$PROJECT_ID" --format='value(status.url)')

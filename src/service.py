@@ -170,6 +170,14 @@ def demo():
                                      os.getenv("GOOGLE_CLIENT_ID", "").strip()))
 
 
+@app.get("/privacy", response_class=FileResponse)
+def privacy():
+    """Required to publish the Google sign-in consent screen, and required to be
+    true: it states that messages reach Vertex AI redacted, that the decision
+    store is ephemeral, and that the session cookie is signed but not encrypted."""
+    return FileResponse(Path(__file__).with_name("privacy.html"))
+
+
 @app.get("/healthz")
 @app.get("/livez")
 def healthz():
