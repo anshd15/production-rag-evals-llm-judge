@@ -91,7 +91,16 @@ def demo():
 
 
 @app.get("/healthz")
+@app.get("/livez")
 def healthz():
+    """Liveness. Both paths, and the reason is not symmetry.
+
+    Google's frontend answers /healthz itself on Cloud Run -- it returns an HTML
+    404 that never reaches this process, while an unmatched route like /nope
+    returns FastAPI's JSON 404. An uptime check pointed at /healthz would report
+    the service permanently down. /livez is the one to monitor; /healthz stays
+    for the container HEALTHCHECK and local runs, where nothing intercepts it.
+    """
     return {"status": "ok"}
 
 

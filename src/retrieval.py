@@ -5,6 +5,7 @@ appears in the golden or dev sets, so the agent can never see the answer to the
 message it is evaluated on, or that same person's other threads.
 """
 import json
+import os
 
 import numpy as np
 import pandas as pd
@@ -30,11 +31,20 @@ def load_history() -> pd.DataFrame:
 
 
 class Retriever:
-    def __init__(self):
+    def __init__(self, require_cache: bool | None = None):
+        """A served retriever refuses to start without its precomputed index.
+
+        Rebuilding takes minutes and emits nothing, so a missing index does not
+        look like a failure -- it looks like a hang. Default on; set
+        RETRIEVAL_REQUIRE_CACHE=0 for the first build, which legitimately has
+        nothing to load.
+        """
+        if require_cache is None:
+            require_cache = os.getenv("RETRIEVAL_REQUIRE_CACHE", "1") != "0"
         self.rows = load_history()
         contexts = [json.loads(c) for c in self.rows.context]
         self.vecs = embed([query_text(t, c) for t, c in zip(self.rows.text, contexts)],
-                          cache_name="history_index")
+                          cache_name="history_index", require_cache=require_cache)
 
     def search_batch(self, examples: list[dict], k: int = 5) -> list[list[dict]]:
         q = embed([query_text(ex["text"], ex.get("context")) for ex in examples])

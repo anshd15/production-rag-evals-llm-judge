@@ -95,3 +95,15 @@ def test_tied_scores_break_the_same_way_in_both_backends():
                                    search_params=models.SearchParams(exact=True)).points
         qdrant_ids = [int(h.id) for h in sorted(hits, key=lambda h: (-h.score, int(h.id)))[:k]]
         assert numpy_ids == qdrant_ids, "tie-break diverged: every cached prompt would miss"
+
+
+def test_missing_index_raises_instead_of_silently_rebuilding(tmp_path, monkeypatch):
+    """A 33,838-row rebuild prints nothing and raises nothing, so in a served
+    request it is indistinguishable from a hang. That is how the first Cloud Run
+    deploy failed: .dockerignore kept the index out of the image."""
+    import pytest
+
+    from src import embeddings
+    monkeypatch.setattr(embeddings, "CACHE_DIR", tmp_path)
+    with pytest.raises(embeddings.IndexMissing, match="missing"):
+        embeddings.embed(["a", "b"], cache_name="history_index", require_cache=True)
