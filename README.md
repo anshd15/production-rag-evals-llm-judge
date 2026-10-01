@@ -56,6 +56,11 @@ Development ran against a stand-in model. Swapping in the real one moved the num
 The same model run through AI Studio instead of Vertex (`runs/final_gemini`) reproduces
 81.8% escalation recall and 6.0% unsafe-auto exactly, so the gap is the model, not the transport.
 
+> **Live demo:** https://rag-triage-5uebwq4ema-uc.a.run.app — paste a customer message and watch
+> it route. The page also ships a panel of attacks (prompt injection, a Luhn-valid card number, a
+> legal threat) so the guardrails fire in front of you rather than being claimed in prose.
+> *Scale-to-zero: the first request after an idle period takes ~50s, then ~1.3s.*
+>
 > 📄 Report: [`reports/REPORT.md`](reports/REPORT.md) · Decision log: [`reports/DECISION_LOG.md`](reports/DECISION_LOG.md)
 
 ## Status
@@ -68,7 +73,7 @@ The same model run through AI Studio instead of Vertex (`runs/final_gemini`) rep
 | Service, container, feedback capture, deploy gate | done |
 | Judge-vs-human agreement (60 blinded ratings) | done — κ = 0.63 on the send decision |
 | Final numbers on a live model | done — Gemini 3.5 Flash Lite on Vertex AI (`runs/final_vertex`) |
-| Cloud Run demo endpoint | not deployed |
+| Cloud Run demo endpoint | live — Vertex via the runtime service account, no API key |
 
 ## Run it as a service
 
