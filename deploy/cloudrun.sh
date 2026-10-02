@@ -61,6 +61,16 @@ echo "==> deploying $SERVICE"
 # The rate limit is PER INSTANCE, so max-instances is part of the spend cap and
 # not just a scaling knob: the real ceiling is max-instances x RATE_LIMIT_PER_MIN.
 # LLM_MAX_CALLS is the hard per-instance stop underneath both.
+# max-instances is 1, not 3: the rate limiter and LLM_MAX_CALLS are per process,
+# so three instances meant three independent budgets and three times the real
+# ceiling. One instance makes both numbers mean what they say.
+#
+# Nothing in the command below may carry a comment. A `#` line inside a
+# backslash-continued command ENDS the continuation: bash ran `gcloud run deploy`
+# without every flag after it -- including --set-env-vars -- and then tried to run
+# `--max-instances` as a command. The deploy still reported success, because Cloud
+# Run keeps the previous revision's environment when none is supplied, so the
+# service came up healthy with stale config and no sign-in configured.
 gcloud run deploy "$SERVICE" \
   --image "$IMAGE" \
   --project "$PROJECT_ID" \
@@ -73,9 +83,6 @@ gcloud run deploy "$SERVICE" \
   --cpu-boost \
   --concurrency 8 \
   --min-instances 0 \
-  # 1, not 3. The limiter and LLM_MAX_CALLS are per process, so three instances
-  # meant three independent budgets and a 3x real ceiling. One instance makes
-  # both numbers mean what they say; the cost is more cold starts on a demo.
   --max-instances 1 \
   --set-env-vars "LLM_OFFLINE=0,LLM_PROVIDER=vertex,GCP_PROJECT=${PROJECT_ID},GCP_LOCATION=${GCP_LOCATION},VERTEX_AGENT_MODEL=${AGENT_MODEL},${RETRIEVAL_ENV},RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-12},LLM_MAX_CALLS=${LLM_MAX_CALLS:-2000},GEMINI_RPM=${GEMINI_RPM:-10},GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},ANON_FREE_MESSAGES=${ANON_FREE_MESSAGES:-3},USER_DAILY_MESSAGES=${USER_DAILY_MESSAGES:-30}" \
   "${SECRET_ARGS[@]}"

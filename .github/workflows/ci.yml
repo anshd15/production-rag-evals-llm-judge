@@ -14,8 +14,11 @@ jobs:
           python-version: "3.12"
           cache: pip
       # Unit tests don't need torch / sentence-transformers (embeddings are imported lazily),
-      # so CI installs the light dependencies only.
-      - run: pip install pandas==3.0.5 numpy==2.5.3 scikit-learn==1.9.1 pyarrow==25.0.1 python-dotenv==1.2.3 pytest==9.1.1 qdrant-client==1.16.1
+      # so CI installs the light dependencies only. fastapi and httpx ARE needed: the
+      # quota tests drive the real app through TestClient, and leaving them out meant
+      # pytest failed at COLLECTION -- every other check in this job was skipped, and
+      # the only symptom was a run that finished suspiciously fast.
+      - run: pip install pandas==3.0.5 numpy==2.5.3 scikit-learn==1.9.1 pyarrow==25.0.1 python-dotenv==1.2.3 pytest==9.1.1 qdrant-client==1.16.1 fastapi==0.141.1 httpx==0.28.1
       - run: python -m pytest -q
       - name: Committed results are internally consistent
         run: python -m src.check_results
