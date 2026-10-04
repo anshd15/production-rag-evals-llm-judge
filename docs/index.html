@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Production RAG Support Agent</title>
+<meta name="description" content="A retrieval-augmented customer-support agent that knows when not to answer, plus the evaluation harness that proves it is safe to deploy. By Ansh Doshi.">
+<meta property="og:title" content="Production RAG Support Agent: evaluated LLM triage">
+<meta property="og:description" content="RAG agent over 40k real support conversations. +24.0pp intent accuracy over TF-IDF, LLM judge validated against human ratings (κ = 0.63), 25 red-team cases in CI. Live on Cloud Run.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf9; --surface: #ffffff; --surface-2: #f4f4f2; --border: #e4e4e0;
+    --text: #18181b; --muted: #5b5b63; --faint: #8a8a93;
+    --accent: #c2410c; --on-accent: #ffffff; --accent-soft: #fff1e8; --good: #15803d; --warn: #b45309;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0d0f; --surface: #151518; --surface-2: #1c1c20; --border: #2a2a30;
+      --text: #ededf0; --muted: #a1a1aa; --faint: #71717a;
+      --accent: #fb923c; --on-accent: #111111; --accent-soft: #2a1a10; --good: #4ade80; --warn: #fbbf24;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0d0d0f; --surface: #151518; --surface-2: #1c1c20; --border: #2a2a30;
+    --text: #ededf0; --muted: #a1a1aa; --faint: #71717a;
+    --accent: #fb923c; --on-accent: #111111; --accent-soft: #2a1a10; --good: #4ade80; --warn: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); }
+  a { color: inherit; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+  header.top { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; font-size: 14px; color: var(--muted); }
+  header.top a { text-decoration: none; }
+  header.top a:hover { color: var(--text); }
+  .hero { padding: 40px 0 32px; }
+  .eyebrow { font: 500 13px/1 var(--mono); color: var(--accent); letter-spacing: .02em; }
+  h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.1; letter-spacing: -0.02em; margin: 14px 0 16px; font-weight: 700; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 640px; margin: 0; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 28px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 15px; text-decoration: none; border: 1px solid var(--border); background: var(--surface); transition: transform .12s ease, border-color .12s ease; }
+  .btn:hover { transform: translateY(-1px); border-color: var(--faint); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .status { display: inline-flex; align-items: center; gap: 8px; font: 13px/1.4 var(--mono); color: var(--muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 25%, transparent); }
+  .status.ready .dot { background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); }
+  .status.waking .dot { animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .status.waking .dot { animation: none; } .btn { transition: none; } }
+  .hint { font-size: 13px; color: var(--faint); margin-top: 10px; }
+  section { padding: 36px 0; border-top: 1px solid var(--border); }
+  h2 { font-size: 22px; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 22px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .step b { display: block; font: 500 12px/1 var(--mono); color: var(--accent); margin-bottom: 8px; }
+  .step p { margin: 0; font-size: 15px; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 520px; }
+  th, td { padding: 12px 14px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; white-space: normal; }
+  thead th { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.agent { font-weight: 700; }
+  td .ci { font: 12px var(--mono); color: var(--faint); margin-left: 6px; }
+  .note { font-size: 13px; color: var(--faint); margin-top: 10px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .card .num { font: 700 26px/1.1 var(--sans); letter-spacing: -0.01em; }
+  .card .lbl { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  ul.clean { margin: 0; padding-left: 18px; }
+  ul.clean li { margin: 6px 0; }
+  .finding { background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border)); border-radius: 12px; padding: 18px; }
+  .finding p { margin: 0; }
+  .finding p + p { margin-top: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font: 13px/1 var(--mono); padding: 8px 10px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+  footer { border-top: 1px solid var(--border); padding: 28px 0 48px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  footer a { text-decoration: none; } footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <a href="https://www.anshdoshi.dev">Ansh Doshi</a>
+    <a href="https://github.com/anshd15/production-rag-evals-llm-judge">GitHub →</a>
+  </header>
+
+  <div class="hero">
+    <div class="eyebrow">Production RAG · Evals · LLM-as-a-Judge</div>
+    <h1>A support agent that knows when <em>not</em> to answer.</h1>
+    <p class="lede">For every customer message it classifies the intent, drafts a reply grounded in how the brand actually resolved similar cases, and decides whether a human must handle it. Most of the work is the evaluation harness that proves it is safe to deploy.</p>
+
+    <div class="cta">
+      <a class="btn primary" id="demo-btn" href="https://rag-triage-5uebwq4ema-uc.a.run.app" target="_blank" rel="noopener">Try the live demo →</a>
+      <a class="btn" href="https://github.com/anshd15/production-rag-evals-llm-judge" target="_blank" rel="noopener">View the code</a>
+      <span class="status waking" id="status" role="status" aria-live="polite"><span class="dot"></span><span id="status-text">Waking the demo server…</span></span>
+    </div>
+    <p class="hint" id="hint">The demo runs on Cloud Run and scales to zero when idle, so the first request takes up to a minute. This page starts it for you as soon as you arrive.</p>
+  </div>
+
+  <section>
+    <h2>What it does</h2>
+    <p class="sub">Built and evaluated on ~40k real SpotifyCares conversations from the Kaggle <i>Customer Support on Twitter</i> dataset.</p>
+    <div class="steps">
+      <div class="step"><b>01 · Classify</b><p>Assigns one of 11 intents, derived from the data with KMeans clustering.</p></div>
+      <div class="step"><b>02 · Retrieve</b><p>Finds the 5 most similar past tickets among 33,838 historical customer → agent exchanges.</p></div>
+      <div class="step"><b>03 · Draft</b><p>Writes a reply grounded in how the brand actually resolved those cases.</p></div>
+      <div class="step"><b>04 · Route</b><p>Auto-handles or escalates to a human, with one of 6 named escalation reasons.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <p class="sub">Golden set of 200 hand-labelled messages, with 95% bootstrap confidence intervals.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Metric</th><th>Agent</th><th>TF-IDF baseline</th><th>Canned reply</th></tr></thead>
+        <tbody>
+          <tr><td>Intent accuracy</td><td class="agent">75.5%<span class="ci">69–81</span></td><td>51.5%</td><td>23.0%</td></tr>
+          <tr><td>Escalations caught</td><td class="agent">81.8%<span class="ci">72–91</span></td><td>57.6%</td><td>0%</td></tr>
+          <tr><td>Replies a reviewer would send †</td><td class="agent">81.4%<span class="ci">76–86</span></td><td>44.5%</td><td>7.0%</td></tr>
+          <tr><td>Auto-sent when a human was needed</td><td class="agent">6.0%</td><td>14.0%</td><td>33.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Paired bootstrap vs. the TF-IDF baseline: intent accuracy <b>+24.0pp</b> [+15.5, +32.5], would-send <b>+36.7pp</b> [+29.6, +44.7]. † Scored by the LLM judge, which was validated against human ratings (below).</p>
+  </section>
+
+  <section>
+    <h2>Evaluation rigour</h2>
+    <p class="sub">The part most demos skip.</p>
+    <div class="cards">
+      <div class="card"><div class="num">200</div><div class="lbl">messages hand-labelled for intent, escalation and reason</div></div>
+      <div class="card"><div class="num">κ = 0.63</div><div class="lbl">LLM judge vs. 60 blinded human ratings (82% agreement)</div></div>
+      <div class="card"><div class="num">2</div><div class="lbl">baselines, with paired bootstrap CIs on every headline number</div></div>
+      <div class="card"><div class="num">CI-gated</div><div class="lbl">dataset checksums, results integrity and a metric regression gate</div></div>
+    </div>
+    <div class="finding" style="margin-top:16px">
+      <p><b>Findings worth more than the headline numbers</b></p>
+      <p>The development stand-in model <b>overstated safety</b>: swapping in the real model moved escalation recall from 86.4% to 81.8%, replicated on an independent 250-message split.</p>
+      <p>AI-generated labels <b>flattered the agent by ~10 points</b>, caught by a blind control group. And sharpening the escalation <i>definition</i> moved precision from 64% to 78% with predictions unchanged.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Guardrails and production engineering</h2>
+    <p class="sub">The safety layer is deliberately not LLM-based: it is the part you least want to be probabilistic.</p>
+    <div class="cards">
+      <div class="card">
+        <ul class="clean">
+          <li>Prompt-injection screening before the model sees the text</li>
+          <li>Luhn-validated card, email and phone redaction</li>
+          <li>Blocks drafts claiming actions the agent cannot take</li>
+          <li><b>25 adversarial red-team cases</b>, green in CI</li>
+        </ul>
+      </div>
+      <div class="card">
+        <ul class="clean">
+          <li>FastAPI on <b>Cloud Run</b>, scale-to-zero, <b>1.3s</b> warm latency</li>
+          <li>Gemini on <b>Vertex AI</b> via service account, no API key anywhere</li>
+          <li>Circuit breaker, backoff, graceful fallback to a human</li>
+          <li>Rate limiting, spend caps, Prometheus metrics, 77 tests</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Stack</h2>
+    <div class="chips" style="margin-top:14px">
+      <span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">Gemini · Vertex AI</span><span class="chip">Sentence Transformers</span><span class="chip">scikit-learn</span><span class="chip">Qdrant</span><span class="chip">Docker</span><span class="chip">Cloud Run</span><span class="chip">GitHub Actions</span><span class="chip">pytest</span><span class="chip">Google OAuth</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built by <a href="https://www.anshdoshi.dev">Ansh Doshi</a></span>
+    <span><a href="https://linkedin.com/in/ansh-doshi15">LinkedIn</a> · <a href="https://github.com/anshd15">GitHub</a> · <a href="mailto:anshdoshi.d16@gmail.com">Email</a></span>
+  </footer>
+
+</div>
+<script>
+  // Wake the Cloud Run service as soon as the page opens, so the cold start is
+  // mostly over by the time the visitor clicks "Try the live demo".
+  // no-cors: the response is opaque, but the promise resolving means the container answered.
+  (function () {
+    var DEMO = "https://rag-triage-5uebwq4ema-uc.a.run.app";
+    var statusEl = document.getElementById("status");
+    var textEl = document.getElementById("status-text");
+    var hintEl = document.getElementById("hint");
+    var started = Date.now(), done = false;
+
+    function ready() {
+      if (done) return; done = true;
+      statusEl.className = "status ready";
+      textEl.textContent = "Demo is awake";
+      hintEl.textContent = "The server is warm, so the demo should load in a couple of seconds.";
+    }
+    function ping() {
+      if (done) return;
+      fetch(DEMO + "/livez", { mode: "no-cors", cache: "no-store" })
+        .then(ready)
+        .catch(function () {
+          if (Date.now() - started < 120000) setTimeout(ping, 4000);
+          else { textEl.textContent = "Still waking: the demo may take a little longer"; }
+        });
+    }
+    ping();
+    var tick = setInterval(function () {
+      if (done) return clearInterval(tick);
+      var s = Math.round((Date.now() - started) / 1000);
+      textEl.textContent = "Waking the demo server… " + s + "s";
+    }, 1000);
+  })();
+</script>
+</body>
+</html>
