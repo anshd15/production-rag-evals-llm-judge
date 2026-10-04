@@ -56,6 +56,9 @@ Development ran against a stand-in model. Swapping in the real one moved the num
 The same model run through AI Studio instead of Vertex (`runs/final_gemini`) reproduces
 81.8% escalation recall and 6.0% unsafe-auto exactly, so the gap is the model, not the transport.
 
+> **Project page:** https://anshd15.github.io/production-rag-evals-llm-judge/ — an overview that
+> wakes the demo in the background, so it is usually warm by the time you click through.
+>
 > **Live demo:** https://rag-triage-5uebwq4ema-uc.a.run.app — paste a customer message and watch
 > it route. The page also ships a panel of attacks (prompt injection, a Luhn-valid card number, a
 > legal threat) so the guardrails fire in front of you rather than being claimed in prose.
