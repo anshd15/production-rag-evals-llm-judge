@@ -12,6 +12,7 @@ Target roles: **AI Engineer, Forward Deployed Engineer (FDE)**.
 |---|---|
 | Project name | Production RAG with Evals and LLM as a Judge |
 | Short name | Production RAG Support Agent |
+| Project page (link this on resumes) | https://anshd15.github.io/production-rag-evals-llm-judge/ |
 | Live demo | https://rag-triage-5uebwq4ema-uc.a.run.app |
 | GitHub | https://github.com/anshd15/production-rag-evals-llm-judge |
 | Status | Deployed, public, working |
